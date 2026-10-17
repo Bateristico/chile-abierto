@@ -151,7 +151,7 @@ export function analyse(p: Periodo) {
   const today = new Date().toISOString().slice(0, 10);
   const asOf = p.fin < today ? p.fin : today;
   const partidos = partyStats(p, asOf);
-  const grandes = partidos.filter((x) => x.escanos >= 3).map((x) => x.alias);
+  const grandes = partidos.filter((x) => x.escanos >= 3 && x.alias !== "IND").map((x) => x.alias);
   return {
     periodo: p.id,
     asOf,

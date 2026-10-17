@@ -21,7 +21,7 @@ export function CongresoView({ periods, colors }: { periods: PeriodView[]; color
   const P = periods.find((p) => p.id === pid)!;
   const a = P.analysis;
   const color = (alias: string) => colors[alias] ?? "#C9CAD3";
-  const big = a.partidos.filter((p) => p.escanos >= 3);
+  const big = a.partidos.filter((p) => p.escanos >= 3 && p.alias !== "IND");
   const chamber = useMemo(() => {
     const xs = big.filter((p) => p.cohesion !== null);
     const seats = xs.reduce((s, p) => s + p.escanos, 0) || 1;
@@ -99,7 +99,7 @@ function PoliticalMap({ P, color, focus, setFocus }: { P: PeriodView; color: (a:
           const placed: { x: number; y: number }[] = [];
           return parties.map((p) => {
             const c = centroid(p.alias);
-            if (!c || (focus && focus !== p.alias)) return null;
+            if (!c || p.alias === "IND" || (focus && focus !== p.alias)) return null;
             const x = X(c.x);
             let y = Y(c.y) - 12;
             for (const dy of [0, -18, 18, -36, 36, -54, 54]) {
@@ -129,13 +129,13 @@ function PoliticalMap({ P, color, focus, setFocus }: { P: PeriodView; color: (a:
 }
 
 function Cohesion({ P, color, chamber }: { P: PeriodView; color: (a: string) => string; chamber: number }) {
-  const rows = P.analysis.partidos.filter((p) => p.escanos >= 3 && p.cohesion !== null).sort((a, b) => (b.cohesion ?? 0) - (a.cohesion ?? 0));
+  const rows = P.analysis.partidos.filter((p) => p.escanos >= 3 && p.cohesion !== null && p.alias !== "IND").sort((a, b) => (b.cohesion ?? 0) - (a.cohesion ?? 0));
   const years = Object.keys(P.analysis.cohesionAnual[rows[0]?.alias] ?? {}).sort();
   return (
     <div className="card rise d1" style={{ flex: "1 1 400px", minWidth: 0, gap: 14 }}>
       <span className="kicker">Cohesión</span>
       <h2 className="sec-title" style={{ fontSize: "clamp(22px, 4cqi, 28px)" }}>Qué tan unido vota cada partido</h2>
-      <p className="small" style={{ color: "var(--ink-2)" }}>Índice de acuerdo: 100% si todos sus diputados votan igual, 0% si se reparten en tres partes iguales. La línea es el promedio de la Cámara ({pct(chamber)}).</p>
+      <p className="small" style={{ color: "var(--ink-2)" }}>Índice de acuerdo: 100% si todos sus diputados votan igual, 0% si se reparten en tres partes iguales. La línea es el promedio de los partidos ({pct(chamber)}). Los independientes no se muestran: no votan como grupo.</p>
       <div style={{ display: "flex", flexDirection: "column", gap: 8, position: "relative" }}>
         {rows.map((p, i) => (
           <div key={p.alias} style={{ display: "grid", gridTemplateColumns: "56px minmax(0, 1fr) 44px", gap: 10, alignItems: "center", fontSize: 13 }}>
@@ -162,7 +162,7 @@ function Cohesion({ P, color, chamber }: { P: PeriodView; color: (a: string) => 
 }
 
 function Agreement({ P }: { P: PeriodView }) {
-  const parties = P.analysis.partidos.filter((p) => p.escanos >= 3).map((p) => p.alias);
+  const parties = P.analysis.partidos.filter((p) => p.escanos >= 3 && p.alias !== "IND").map((p) => p.alias);
   const share = (a: string, b: string) => {
     if (a === b) return null;
     const x = P.analysis.acuerdo.find((r) => (r.a === a && r.b === b) || (r.a === b && r.b === a));
