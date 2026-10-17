@@ -175,7 +175,7 @@ export function FichaReal({ f }: { f: FichaRecord }) {
                       <span style={{ display: "flex", height: 8, borderRadius: 4, overflow: "hidden", gap: 1 }} aria-hidden="true">
                         {counted.map(([k, c]) => <span key={k} className="grow" style={{ flex: c, background: OPT_COLOR[k] }} />)}
                       </span>
-                      <span className="tiny" style={{ color: "var(--ink-2)" }}>{counted.map(([k, c]) => `${k} ${c}`).join(" · ")} — en {p.votos.length} votaciones de este proyecto durante su periodo</span>
+                      <span className="tiny" style={{ color: "var(--ink-2)" }}>{counted.map(([k, c]) => `${k} ${c}`).join(" · ")} — en {p.votos.length} {p.votos.length === 1 ? "votación" : "votaciones"} de este proyecto durante su periodo</span>
                     </>
                   ) : (
                     <span className="tiny muted">La Cámara no votó este proyecto en Sala durante su periodo.</span>
