@@ -89,9 +89,9 @@ export default function Home() {
           </article>
 
           <aside className="receipt rise d2" aria-labelledby="bol">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>
-              <h2 id="bol" style={{ fontSize: 26 }}>Tu boleta del día</h2>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--muted)" }}>Proyecto 2027</span>
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "baseline", gap: "4px 12px" }}>
+              <h2 id="bol" style={{ fontSize: 26, whiteSpace: "nowrap" }}>Tu boleta del día</h2>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--muted)", whiteSpace: "nowrap" }}>Proyecto 2027</span>
             </div>
             <p className="small muted">Gasto diario de los ministerios por habitante. Toca una línea para ver la partida.</p>
             <div className="dash" />
