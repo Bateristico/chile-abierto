@@ -3,7 +3,7 @@ import path from "node:path";
 import { z } from "zod";
 import { fetchImmutable, fetchSnapshot, pool, type Snapshot } from "./http";
 import { pdfPages } from "./pdf";
-import { CAMARA_ENDPOINTS, collectAll, findArray, parseOpcion, parseXml, reconcileVotes, VotacionSchema, OPCION } from "./camara";
+import { CAMARA_ENDPOINTS, collectAll, findArray, parseOpcion, parseXml, reconcileVotes, VotacionSchema, OPCION, voteDeputyId } from "./camara";
 import { checkQuote } from "../promises/validate";
 import type { Connector, ConnectorResult } from "./types";
 import type { FactInput, SourceRef } from "../provenance/types";
@@ -132,7 +132,7 @@ async function runFicha(cfg: FichaConfig, notes: string[], issues: string[]) {
     const snap = await fetchImmutable(CAMARA_ENDPOINTS.votacionDetalle(v.Id), "camara");
     const all = findArray(parseXml(snap.body), "Voto").map((x) => {
       const o = x as Record<string, unknown>;
-      return { votacionId: v.Id, diputadoId: Number((o.Diputado as Record<string, unknown> | undefined)?.Id), ...parseOpcion(o.OpcionVoto) };
+      return { votacionId: v.Id, diputadoId: voteDeputyId(o), ...parseOpcion(o.OpcionVoto) };
     });
     if (!all.length) return;
     if (reconcileVotes(v, all)) {
@@ -196,7 +196,7 @@ async function runFicha(cfg: FichaConfig, notes: string[], issues: string[]) {
       let d = detailFor.get(v.id);
       if (!d) {
         const snap = await fetchImmutable(CAMARA_ENDPOINTS.votacionDetalle(v.id), "camara");
-        const m = findArray(parseXml(snap.body), "Voto").map((x) => x as Record<string, unknown>).find((o) => Number((o.Diputado as Record<string, unknown> | undefined)?.Id) === cfg.diputadoId);
+        const m = findArray(parseXml(snap.body), "Voto").map((x) => x as Record<string, unknown>).find((o) => voteDeputyId(o) === cfg.diputadoId);
         if (m) d = parseOpcion(m.OpcionVoto);
       }
       if (d) suyos.push({ ...v, codigo: d.codigo, opcion: LABEL[d.codigo] ?? d.opcion });

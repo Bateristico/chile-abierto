@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { checkGrounding, numbersIn } from "@/lib/agents/grounding";
 import { checkQuote } from "@/lib/promises/validate";
 import { squarify } from "@/lib/budget/treemap";
-import { reconcileVotes, parseXml, findArray, parseOpcion, parseDeputies } from "@/lib/connectors/camara";
+import { reconcileVotes, parseXml, findArray, parseOpcion, parseDeputies, voteDeputyId } from "@/lib/connectors/camara";
 import { redactUrl } from "@/lib/connectors/http";
 import { findPartidaRow } from "@/lib/connectors/dipres-ifp";
 import { pickCpiSeries } from "@/lib/connectors/bcch";
@@ -82,9 +82,11 @@ describe("connectors", () => {
     const v = { Id: 90328, Fecha: "2026-10-07T13:18:43", TotalSi: 2, TotalNo: 1, TotalAbstencion: 1, TotalDispensado: 0 };
     const votes = findArray(parseXml(xml), "Voto").map((x) => {
       const o = x as Record<string, unknown>;
-      return { votacionId: 90328, diputadoId: Number((o.Diputado as Record<string, unknown>).Id), ...parseOpcion(o.OpcionVoto) };
+      return { votacionId: 90328, diputadoId: voteDeputyId(o), ...parseOpcion(o.OpcionVoto) };
     });
     expect(votes).toHaveLength(5);
+    // Every vote must carry its deputy: the first live ficha run found none because of this.
+    expect(votes.map((v) => v.diputadoId)).toEqual([803, 815, 843, 872, 900]);
     // "No Vota" must not be counted as a "No": that was the bug in the first live run.
     expect(reconcileVotes(v, votes)).toBeNull();
     expect(reconcileVotes({ ...v, TotalNo: 2 }, votes)).toMatch(/no cuadran/);

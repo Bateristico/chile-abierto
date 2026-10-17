@@ -137,6 +137,16 @@ export function reconcileVotes(v: z.infer<typeof VotacionSchema>, votes: VoteRec
   return null;
 }
 
+/**
+ * Deputy id inside a <Voto>. The parser lists every <Diputado> as an array (deputy lists need it), so a vote's single
+ * deputy arrives as a one-element array: read it either way.
+ */
+export function voteDeputyId(voto: Record<string, unknown>): number {
+  const d = voto.Diputado;
+  const node = (Array.isArray(d) ? d[0] : d) as Record<string, unknown> | undefined;
+  return Number(node?.Id);
+}
+
 /** Parse one OpcionVoto node into its official code and label. */
 export function parseOpcion(node: unknown): { codigo: number; opcion: string } {
   if (node && typeof node === "object") {
@@ -229,8 +239,7 @@ export const camara: Connector = {
       const snap = await fetchSnapshot(CAMARA_ENDPOINTS.votacionDetalle(v.Id), "camara");
       const these: VoteRecord[] = findArray(parseXml(snap.body), "Voto").map((x) => {
         const o = x as Record<string, unknown>;
-        const dip = (o["Diputado"] ?? {}) as Record<string, unknown>;
-        return { votacionId: v.Id, diputadoId: Number(dip["Id"]), ...parseOpcion(o["OpcionVoto"]) };
+        return { votacionId: v.Id, diputadoId: voteDeputyId(o), ...parseOpcion(o["OpcionVoto"]) };
       });
       if (these.length === 0) {
         withoutDetail++; // e.g. votes without individual roll call; totals are still published in the list
