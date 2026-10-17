@@ -95,7 +95,7 @@ async function runPeriodo(p: (typeof PERIODOS)[number], notes: string[], issues:
     }
     for (const x of votes) if (!known.has(x.diputadoId)) unknownDeputies.add(x.diputadoId);
     const r = v as Record<string, unknown>;
-    return { id: v.Id, f: v.Fecha, d: String(v.Descripcion ?? ""), b: boletinOf(String(v.Descripcion ?? "")), si: v.TotalSi, no: v.TotalNo, ab: v.TotalAbstencion, q: text(r.Quorum), r: text(r.Resultado), c: encodeVotes(orden, votes) };
+    return { id: v.Id, f: v.Fecha, d: String(v.Descripcion ?? ""), b: boletinOf(String(v.Descripcion ?? "")), si: v.TotalSi, no: v.TotalNo, ab: v.TotalAbstencion, q: text(r.Quorum), r: text(r.Resultado), k: text(r.Tipo) || undefined, c: encodeVotes(orden, votes) };
   });
   const ok = votaciones.filter((v): v is Votacion => v !== null).sort((a, b) => b.f.localeCompare(a.f) || b.id - a.id);
   if (cuarentena.length > Math.max(10, raw.length * 0.02)) issues.push(`Periodo ${p.nombre}: ${cuarentena.length} de ${raw.length} votaciones no cuadran con sus totales.`);

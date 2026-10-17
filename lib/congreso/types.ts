@@ -33,6 +33,8 @@ export interface Votacion {
   /** Quorum and result as published in the yearly list (the by-bill service mislabels rejections as «Unánime»). */
   q: string;
   r: string;
+  /** Kind of matter from the yearly list (Proyecto de Ley, Proyecto de Resolución, Otros…) */
+  k?: string;
   /** From the bill's vote list: kind of vote (General, Particular, Única…), the article or indicación, the stage. */
   tipo?: string;
   art?: string;
@@ -73,4 +75,10 @@ export function partyOn(d: Diputado | undefined, date: string): string | null {
 
 export function boletinOf(descripcion: string): string | undefined {
   return descripcion.match(/(\d{3,5}-\d{2})/)?.[1];
+}
+
+/** A readable title for votes without a bill: «5-Cambio de Trámite» → «Cambio de trámite». */
+export function voteTitle(v: { d: string; k?: string }): string {
+  const t = v.d.replace(/^\d+\s*-\s*/, "").trim();
+  return t ? t.charAt(0).toUpperCase() + t.slice(1).toLowerCase().replace(/n° /g, "N° ") : v.k ?? "Votación";
 }

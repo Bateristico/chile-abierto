@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { BASE } from "@/lib/base";
 import type { ClientPeriod } from "@/lib/congreso/load";
-import type { Votacion } from "@/lib/congreso/types";
+import { voteTitle, type Votacion } from "@/lib/congreso/types";
 
 const OPT: Record<string, { label: string; color: string }> = {
   "1": { label: "A favor", color: "var(--blue)" },
@@ -221,13 +221,13 @@ export function VotacionesExplorer({ periodos }: { periodos: { id: number; nombr
                 <li key={v.id}>
                   <button type="button" className="vrow" aria-pressed={sel === v.id} onClick={() => { setSel(v.id); if (window.innerWidth < 760) requestAnimationFrame(() => document.getElementById("vdetail")?.scrollIntoView({ behavior: "smooth", block: "start" })); }}>
                     <span style={{ display: "flex", justifyContent: "space-between", gap: 8, flexWrap: "wrap" }}>
-                      <span className="tiny muted">{fmtDay(v.f)} · {[v.tipo, v.tram].filter(Boolean).join(" · ") || v.d}</span>
+                      <span className="tiny muted">{fmtDay(v.f)} · {[v.tipo, v.tram].filter(Boolean).join(" · ") || v.k || "Votación en Sala"}</span>
                       <span style={{ display: "flex", gap: 6 }}>
                         {Math.abs(v.si - v.no) <= 5 && <span className="chip warn">Ajustada</span>}
                         <span className={`chip ${/aprobad/i.test(v.r) ? "ok" : /rechazad/i.test(v.r) ? "bad" : ""}`}>{v.r || "—"}</span>
                       </span>
                     </span>
-                    <strong className="vtitle">{p?.nombre || v.d}</strong>
+                    <strong className="vtitle">{p?.nombre || voteTitle(v)}</strong>
                     {v.art && <span className="tiny muted vart">{v.art}</span>}
                     <span className="vbar" aria-label={`${v.si} a favor, ${v.no} en contra, ${v.ab} abstenciones`}>
                       <span style={{ flex: v.si / total, background: OPT["1"].color }} />
@@ -289,8 +289,8 @@ function VoteDetail({ v, data, byId, highlight }: { v: Votacion; data: ClientPer
   pos.sort((a, b) => b.a - a.a);
   return (
     <div className="card" style={{ gap: 14, padding: 22 }}>
-      <span className="kicker">{fmtDay(v.f)} · {[v.tipo, v.tram].filter(Boolean).join(" · ")}</span>
-      <h2 style={{ fontSize: 22, lineHeight: 1.2 }}>{p?.nombre || v.d}</h2>
+      <span className="kicker">{fmtDay(v.f)} · {[v.tipo, v.tram].filter(Boolean).join(" · ") || v.k || "Votación en Sala"}</span>
+      <h2 style={{ fontSize: 22, lineHeight: 1.2 }}>{p?.nombre || voteTitle(v)}</h2>
       {p && <span className="tiny muted">Boletín {v.b} · {p.iniciativa}{p.materias.length ? ` · ${p.materias.slice(0, 3).join(", ")}` : ""}</span>}
       {v.art && <p className="small" style={{ color: "var(--ink-2)", maxHeight: 120, overflow: "auto" }}>{v.art}</p>}
       <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "baseline" }}>

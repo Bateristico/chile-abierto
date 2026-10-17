@@ -194,7 +194,7 @@ function Comparador({ d, P, byId, other, setOther }: { d: DipRow; P: DipPeriod; 
       if (!(a in lab) || !(b in lab)) continue;
       both++;
       if (a === b) same++;
-      else if (diff.length < 15) diff.push({ id: v.id, f: v.f, t: (v.b && data.proyectos[v.b]?.nombre) || v.d, a: lab[a], b: lab[b] });
+      else if (diff.length < 15) diff.push({ id: v.id, f: v.f, t: (v.b && data.proyectos[v.b]?.nombre) || v.d.replace(/^\d+\s*-\s*/, ""), a: lab[a], b: lab[b] });
     }
     return { both, same, diff };
   }, [data, d.id, other]);
