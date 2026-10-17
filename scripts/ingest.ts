@@ -27,11 +27,13 @@ function writeAtomic(file: string, data: unknown, backups: Map<string, string | 
 
 const backups = new Map<string, string | null>();
 let failures = 0;
+const status: { id: string; status: "ok" | "issues" | "error" | "skipped"; detail: string }[] = [];
 
 for (const c of selected) {
   const missing = (c.requires ?? []).filter((k) => !process.env[k]);
   if (missing.length) {
     console.log(`– ${c.id}: omitido, faltan ${missing.join(", ")}`);
+    status.push({ id: c.id, status: "skipped", detail: `Faltan credenciales: ${missing.join(", ")}` });
     continue;
   }
   process.stdout.write(`→ ${c.id}: ${c.description}… `);
@@ -42,17 +44,27 @@ for (const c of selected) {
       failures++;
       fs.writeFileSync(issuesFile, JSON.stringify({ at: new Date().toISOString(), issues: res.issues, notes: res.notes }, null, 2) + "\n");
       console.log(`con ${res.issues.length} problemas; no se publica nada. Ver ${path.relative(process.cwd(), issuesFile)}`);
+      status.push({ id: c.id, status: "issues", detail: `${res.issues.length} problemas en revisión` });
       continue;
     }
     if (fs.existsSync(issuesFile)) fs.rmSync(issuesFile);
     if (res.facts.length) writeAtomic(path.join(STORE, `${c.id}.facts.json`), res.facts, backups);
     if (res.records) writeAtomic(path.join(STORE, `${c.id}.records.json`), { at: new Date().toISOString(), ...res.records }, backups);
     console.log(`ok · ${res.facts.length} datos · ${res.notes.join(" · ")}`);
+    status.push({ id: c.id, status: "ok", detail: res.notes.join(" · ") });
   } catch (err) {
     failures++;
     console.log(`error: ${(err as Error).message}`);
+    status.push({ id: c.id, status: "error", detail: (err as Error).message });
   }
 }
+
+// Snapshot metadata: shown in the site footer and on /fuentes.
+const ran = status.filter((s) => s.status !== "skipped");
+fs.writeFileSync(
+  path.join(STORE, "snapshot.json"),
+  JSON.stringify({ takenAt: new Date().toISOString(), ok: ran.filter((s) => s.status === "ok").length, total: ran.length, connectors: status }, null, 2) + "\n",
+);
 
 // Re-verify everything with the new files in place; roll back on any failure.
 try {

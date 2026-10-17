@@ -129,3 +129,16 @@ export function factsByPrefix(prefix: string): Fact[] {
 export function dataMode(): "demo" | "live" {
   return process.env.DATA_MODE === "live" ? "live" : "demo";
 }
+
+export interface SnapshotInfo {
+  takenAt: string;
+  ok: number;
+  total: number;
+  connectors: { id: string; status: "ok" | "issues" | "error" | "skipped"; detail: string }[];
+}
+
+/** Metadata written by `npm run ingest`: when the data snapshot was taken and how each official connector did. */
+export function snapshotInfo(): SnapshotInfo | null {
+  const p = path.join(DATA, "store", "snapshot.json");
+  return fs.existsSync(p) ? (JSON.parse(fs.readFileSync(p, "utf8")) as SnapshotInfo) : null;
+}

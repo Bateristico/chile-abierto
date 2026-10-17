@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { loadFacts, dataMode } from "@/lib/facts";
+import { loadFacts, dataMode, snapshotInfo } from "@/lib/facts";
+import { href } from "@/lib/base";
+import { fmtDate } from "@/lib/format";
 
 const NAV = [
   { href: "/", label: "Inicio" },
@@ -39,12 +41,16 @@ export function Header({ current }: { current: string }) {
 }
 
 export function Footer() {
+  const snap = snapshotInfo();
   return (
     <footer className="site">
+      <span style={{ flexBasis: "100%" }}>
+        {snap ? `Datos al ${fmtDate(snap.takenAt)}: ${snap.ok} de ${snap.total} conectores oficiales al día.` : "Datos semilla verificados manualmente; aún no se ejecuta una ingesta automática."} El sitio se reconstruye cada día.
+      </span>
       <span>Fuentes: DIPRES, Cámara de Diputadas y Diputados, Senado, BCN, Servel, ChileCompra, Consejo para la Transparencia, Banco Central, INE.</span>
       <span style={{ display: "flex", gap: 16 }}>
         <Link href="/fuentes">Cómo verificamos</Link>
-        <a href="/api/facts">Datos abiertos (JSON)</a>
+        <a href={href("/datos/facts.json")}>Datos abiertos (JSON)</a>
       </span>
     </footer>
   );

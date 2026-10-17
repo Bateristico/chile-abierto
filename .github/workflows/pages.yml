@@ -1,0 +1,90 @@
+name: Snapshot y publicación
+
+# Daily snapshot of the official sources, AI layer, verification and static deploy to GitHub Pages.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "0 10 * * *" # 07:00 en Chile (UTC-3)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DATA_MODE: demo
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # 1. Snapshot from official sources. A failing connector publishes nothing and the site keeps the verified seed data;
+      #    its problems are shown on /fuentes. Credentials are optional: connectors without them are skipped.
+      - name: Captura de fuentes oficiales
+        continue-on-error: true
+        env:
+          MERCADOPUBLICO_TICKET: ${{ secrets.MERCADOPUBLICO_TICKET }}
+          BCCH_USER: ${{ secrets.BCCH_USER }}
+          BCCH_PASS: ${{ secrets.BCCH_PASS }}
+          BCCH_CPI_SERIES: ${{ vars.BCCH_CPI_SERIES }}
+          CAMARA_MAX_DETAIL: ${{ vars.CAMARA_MAX_DETAIL || '200' }}
+        run: npm run ingest
+
+      # 2. AI layer over the verified snapshot: insights and pre-answered questions, kept only if every number checks out.
+      - name: Hallazgos y respuestas con IA
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'claude-sonnet-5-5' }}
+        run: npm run ai-snapshot
+
+      # 3. Tests and verified build. If any published number fails a check, the deploy stops here.
+      - run: npm test
+
+      - name: Construir sitio estático
+        env:
+          NEXT_BASE_PATH: /${{ github.event.repository.name }}
+        run: |
+          npm run build
+          touch out/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+      # Audit trail: raw official documents (with their sha256) and the store used for this snapshot.
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: snapshot-${{ github.run_id }}
+          path: |
+            data/raw
+            data/store
+          retention-days: 90
+          if-no-files-found: ignore
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

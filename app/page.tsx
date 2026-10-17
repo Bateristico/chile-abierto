@@ -5,8 +5,7 @@ import { getFact } from "@/lib/facts";
 import { toProv } from "@/lib/provenance/view";
 import { partidas, allFindings } from "@/lib/findings/rules";
 import { fmtClp, fmtDate, fmtBillones } from "@/lib/format";
-
-export const revalidate = 3600;
+import { href } from "@/lib/base";
 
 export default function Home() {
   const pop = getFact("poblacion.2026");
@@ -49,7 +48,7 @@ export default function Home() {
               Leemos el presupuesto, las votaciones del Congreso y los registros de lobby directo de las fuentes oficiales, y te los explicamos en
               simple. Cada cifra muestra de dónde viene y cómo la verificamos.
             </p>
-            <form className="search" action="/hallazgos" role="search">
+            <form className="search" action={href("/hallazgos/")} role="search">
               <label htmlFor="q" className="sr-only">Pregunta</label>
               <input id="q" name="q" type="search" placeholder="Pregunta: ¿cuánto sube Salud en 2027?" />
               <button className="btn primary" style={{ minHeight: 56, borderRadius: 14, fontSize: 17, padding: "0 24px" }}>Preguntar</button>

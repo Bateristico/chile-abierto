@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Prov } from "./Prov";
 import type { ProvInfo } from "@/lib/provenance/view";
 import { squarify } from "@/lib/budget/treemap";
@@ -18,8 +18,13 @@ export interface PartidaView {
 
 type Unit = "total" | "persona-ano" | "persona-dia";
 
-export function BudgetExplorer({ partidas, totalMiles, population, initial }: { partidas: PartidaView[]; totalMiles: number; population: number; initial?: string }) {
-  const [sel, setSel] = useState<string>(initial && partidas.some((p) => p.slug === initial) ? initial : "salud");
+export function BudgetExplorer({ partidas, totalMiles, population }: { partidas: PartidaView[]; totalMiles: number; population: number }) {
+  const [sel, setSel] = useState<string>("salud");
+  // Static site: the selected partida comes from ?p= in the browser (e.g. links from the home receipt).
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search).get("p");
+    if (p && partidas.some((x) => x.slug === p)) setSel(p);
+  }, [partidas]);
   const [unit, setUnit] = useState<Unit>("total");
   const [tax, setTax] = useState(100000);
   const rects = useMemo(() => squarify(partidas.map((p) => ({ key: p.slug, value: p.miles })), 160, 100), [partidas]);

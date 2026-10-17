@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "npm run verify && next build",
+    "build": "npm run verify && tsx scripts/export-data.ts && next build",
     "start": "next start",
     "verify": "tsx scripts/verify.ts",
     "ingest": "tsx scripts/ingest.ts",
     "extract-promises": "tsx scripts/extract-promises.ts",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "ai-snapshot": "tsx scripts/ai-snapshot.ts",
+    "serve": "npx --yes serve out"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

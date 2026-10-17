@@ -8,11 +8,27 @@ Cómo gasta Chile su presupuesto, cómo votan sus parlamentarios frente a lo que
 
 ```bash
 npm install
-cp .env.example .env.local   # opcional: ANTHROPIC_API_KEY para el asistente
 npm run dev                  # http://localhost:3000
-npm test                     # 23 pruebas de las reglas de verificación
-npm run build                # verifica los datos y luego construye
+npm test                     # 28 pruebas de las reglas de verificación
+npm run build                # verifica los datos y exporta el sitio estático a out/
+npm run serve                # sirve out/ localmente
 ```
+
+## Publicación en GitHub Pages (snapshot diario)
+
+El sitio es **estático**: los datos y la capa de IA se capturan, verifican y "hornean" al construir. `.github/workflows/pages.yml` corre en cada push a `main`, cada día a las 07:00 de Chile y a mano:
+
+1. **Captura** (`npm run ingest`): conectores contra fuentes oficiales. Un conector que falla no publica nada; el sitio mantiene los datos verificados y lo informa en `/fuentes`.
+2. **IA** (`npm run ai-snapshot`): Claude propone hallazgos y responde preguntas fijas sobre los datos del día. Solo se publica lo que pasa la verificación de cifras y un segundo modelo revisor. Lo descartado y el motivo se listan en `/fuentes`.
+3. **Pruebas y build**: si cualquier cifra publicada falla una comprobación, no se despliega.
+4. **Auditoría**: los documentos oficiales descargados (con sha256) quedan como artefacto del workflow por 90 días.
+
+Configuración en GitHub (una vez):
+
+- *Settings → Pages → Source: GitHub Actions*.
+- *Settings → Secrets and variables → Actions*: `ANTHROPIC_API_KEY` (capa de IA). Opcionales: `MERCADOPUBLICO_TICKET`, `BCCH_USER`, `BCCH_PASS`; variables `ANTHROPIC_MODEL`, `BCCH_CPI_SERIES`, `CAMARA_MAX_DETAIL`.
+
+Datos abiertos publicados con el sitio: `/datos/facts.json`, `/datos/verification-report.json`, `/datos/snapshot.json`, `/datos/ai-snapshot.json`.
 
 ## Páginas
 
@@ -21,9 +37,9 @@ npm run build                # verifica los datos y luego construye
 | `/` | Boleta diaria por persona, tramitación del Presupuesto 2027 | Reales y verificados |
 | `/presupuesto` | Treemap de las 32 partidas del Proyecto 2027, alzas y bajas, calculadora de impuestos | Reales (corroborados, con controles contra DIPRES) |
 | `/promesas` | Promesas vs votos por parlamentario | Ejemplo, hasta correr los conectores de Cámara y promesas |
-| `/hallazgos` | Hallazgos calculados con reglas reproducibles + asistente con IA | Reales; los cruces de lobby y aportes son de ejemplo |
-| `/fuentes` | Registro público de cada dato, sus fuentes y comprobaciones | — |
-| `/api/facts` | Todos los datos publicados en JSON, con procedencia | — |
+| `/hallazgos` | Preguntas respondidas por IA, hallazgos por reglas y hallazgos propuestos por IA | Reales; los cruces de lobby y aportes son de ejemplo |
+| `/fuentes` | Registro público de cada dato, sus fuentes, comprobaciones y estado de la última captura | — |
+| `/datos/facts.json` | Todos los datos publicados en JSON, con procedencia | — |
 
 ## Modelo de verificación
 
@@ -79,9 +95,11 @@ npm run extract-promises -- --url <pdf del programa> --publisher servel --author
 
 Claude propone promesas con cita y página; **solo se aceptan si la cita aparece textual en el PDF** (`lib/promises/validate.ts`). Las demás van a una cola de revisión. La relación promesa–voto la confirma un editor.
 
-## Asistente (`/api/ask`)
+## Capa de IA (snapshot)
 
-Usa Claude con dos herramientas (buscar datos verificados, listar hallazgos). Después de responder, `lib/agents/grounding.ts` comprueba que **cada número de la respuesta coincida con un dato consultado**; si no, pide corregir una vez y, si persiste, la respuesta se marca con advertencia. Para usar Bedrock en lugar de la API de Anthropic, cambia el cliente en `lib/agents/ask.ts` por `@anthropic-ai/bedrock-sdk`.
+- **Preguntas** (`lib/agents/ask.ts`): Claude con dos herramientas (buscar datos verificados, listar hallazgos). `lib/agents/grounding.ts` comprueba que **cada número de la respuesta coincida con un dato consultado**; si no, pide corregir una vez; si persiste, la respuesta no se publica.
+- **Hallazgos** (`lib/agents/insights.ts`): Claude propone cruces con la tabla de datos verificados. Cada uno debe citar ≥2 datos, y cada cifra debe salir **de los datos que cita**. Luego un revisor independiente lo marca respaldado o no. En cada build se re-valida contra los datos del día: si los datos cambiaron, el hallazgo desaparece.
+- Pages es estático, así que no hay preguntas libres en vivo. Para eso se puede exponer `ask()` en una Lambda (o con `@anthropic-ai/bedrock-sdk`) y llamarla desde `SnapshotQA`.
 
 ## Próximos pasos
 

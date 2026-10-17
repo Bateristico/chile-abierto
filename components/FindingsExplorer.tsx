@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Prov } from "./Prov";
 import type { ProvInfo } from "@/lib/provenance/view";
 import type { Finding } from "@/lib/findings/rules";
@@ -19,10 +19,14 @@ function Meter({ status }: { status: string }) {
   );
 }
 
-export function FindingsExplorer({ findings, provs, initial }: { findings: Finding[]; provs: Record<string, ProvInfo>; initial?: string }) {
+export function FindingsExplorer({ findings, provs }: { findings: Finding[]; provs: Record<string, ProvInfo> }) {
   const crosses = [...new Set(findings.map((f) => f.cross))];
   const [filter, setFilter] = useState<string | null>(null);
-  const [sel, setSel] = useState(initial && findings.some((f) => f.id === initial) ? initial : findings[0]?.id);
+  const [sel, setSel] = useState(findings[0]?.id);
+  useEffect(() => {
+    const f = new URLSearchParams(window.location.search).get("f");
+    if (f && findings.some((x) => x.id === f)) setSel(f);
+  }, [findings]);
   const visible = findings.filter((f) => !filter || f.cross === filter);
   const s = findings.find((f) => f.id === sel) ?? findings[0];
   if (!s) return <p>No hay hallazgos todavía.</p>;
@@ -42,7 +46,7 @@ export function FindingsExplorer({ findings, provs, initial }: { findings: Findi
             <span style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", justifyContent: "space-between" }}>
               <span className="small" style={{ color: "var(--ink-2)" }}>{f.cross}</span>
               <span style={{ fontSize: 13, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: f.origin === "ejemplo" ? "#eceef1" : "var(--blue-tint)", color: f.origin === "ejemplo" ? "var(--ink-2)" : "var(--blue-deep)" }}>
-                {f.origin === "ejemplo" ? "Ejemplo" : "Calculado con datos verificados"}
+                {f.origin === "ejemplo" ? "Ejemplo" : f.origin === "ia" ? "Propuesto por IA, verificado" : "Calculado con reglas"}
               </span>
             </span>
             <strong style={{ fontSize: 17, lineHeight: 1.35 }}>{f.title}</strong>
@@ -84,6 +88,12 @@ export function FindingsExplorer({ findings, provs, initial }: { findings: Findi
           <figcaption className="tiny muted">Cada caja es un dato con su fuente; ábrela para ver cómo se verificó.</figcaption>
         </figure>
 
+        {s.origin === "ia" && (
+          <p className="small" style={{ background: "var(--blue-tint)", borderRadius: 12, padding: "12px 14px", color: "var(--ink-2)" }}>
+            <strong style={{ color: "var(--ink)" }}>Cómo se verificó:</strong> lo propuso un modelo de IA; cada cifra coincide con un dato verificado que cita, y un
+            segundo modelo lo revisó contra esos datos{s.critic ? `: «${s.critic}»` : "."}
+          </p>
+        )}
         <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
           <div style={{ flex: "1 1 250px", background: "var(--ground)", borderRadius: 14, padding: "16px 18px", display: "flex", flexDirection: "column", gap: 8 }}>
             <strong>Otras explicaciones posibles</strong>

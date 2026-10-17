@@ -3,7 +3,9 @@ import path from "node:path";
 import { getFact, loadFacts, dataMode } from "../facts";
 import { weakest } from "../provenance/verify";
 import type { Fact, Status } from "../provenance/types";
-import { fmtPct, fmtBillones, fmtClp, fmtUsdMillones } from "../format";
+import { fmtPct, fmtBillones, fmtClp, fmtUsdMillones, fmtFact } from "../format";
+import { getPublisher } from "../provenance/sources";
+import { usableFacts, validateInsight, type ValidatedInsight } from "../agents/insights";
 
 export interface ChainNode {
   source: string;
@@ -23,8 +25,10 @@ export interface Finding {
   edges: string[];
   alternatives: string[];
   wouldChange: string;
-  /** Deterministic rule (reproducible from the facts) or demo fixture. */
-  origin: "regla" | "ejemplo";
+  /** Deterministic rule (reproducible from the facts), AI-proposed and verified, or demo fixture. */
+  origin: "regla" | "ia" | "ejemplo";
+  /** For AI findings: the independent reviewer's note. */
+  critic?: string;
   mentionsPeople: boolean;
 }
 
@@ -187,8 +191,50 @@ function demoFindings(): Finding[] {
   return (JSON.parse(fs.readFileSync(file, "utf8")) as Omit<Finding, "status" | "origin">[]).map((f) => ({ ...f, status: "ejemplo" as Status, origin: "ejemplo" as const }));
 }
 
+export interface AiSnapshot {
+  generatedAt: string;
+  model: string;
+  insights: ValidatedInsight[];
+  qa: (import("../agents/ask").AskResult & { question: string })[];
+}
+
+export function aiSnapshot(): AiSnapshot | null {
+  const file = path.join(process.cwd(), "data", "store", "ai-snapshot.json");
+  return fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, "utf8")) as AiSnapshot) : null;
+}
+
+/** AI insights from the snapshot, re-validated against today's facts: if the data moved, the insight is dropped. */
+function aiFindings(): Finding[] {
+  const snap = aiSnapshot();
+  if (!snap) return [];
+  const facts = usableFacts();
+  const byId = new Map(facts.map((f) => [f.id, f]));
+  const out: Finding[] = [];
+  for (const raw of snap.insights) {
+    const v = validateInsight(raw, facts);
+    if (!v.ok) continue;
+    const cited = v.insight.factIds.map((id) => byId.get(id)!);
+    out.push({
+      ...v.insight,
+      id: `ia-${v.insight.id}`,
+      status: weakest(cited.map((f) => f.status)),
+      chain: cited.slice(0, 4).map((f) => ({
+        source: f.sources[0] ? getPublisher(f.sources[0].publisher)?.name.replace(/\s*\(.*\)$/, "") ?? "Fuente" : "Cálculo",
+        label: f.label.length > 48 ? shortName(f.label) : f.label,
+        detail: fmtFact(f),
+        factId: f.id,
+      })),
+      edges: [],
+      origin: "ia",
+      mentionsPeople: false,
+      critic: raw.critic,
+    });
+  }
+  return out;
+}
+
 export function allFindings(): Finding[] {
   const ps = partidas();
   const real = [ruleDebt(), ruleExtremes(ps), ruleLargeCuts(ps), ruleConcentration(ps)].filter((f) => f.status !== "pendiente");
-  return [...real, ...demoFindings()];
+  return [...real, ...aiFindings(), ...demoFindings()];
 }

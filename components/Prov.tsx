@@ -1,5 +1,6 @@
 import type { ProvInfo } from "@/lib/provenance/view";
 import { STATUS_HELP, STATUS_LABEL } from "@/lib/format";
+import { href } from "@/lib/base";
 
 /**
  * Verification badge. Every number on screen sits next to one. Built on <details> so it works without JavaScript
@@ -57,7 +58,7 @@ export function Prov({ info, align = "left" }: { info: ProvInfo; align?: "left" 
             </ul>
           </div>
         )}
-        <a href={`/fuentes#${info.id}`} className="small">Ver en el registro de fuentes</a>
+        <a href={href(`/fuentes/#${info.id}`)} className="small">Ver en el registro de fuentes</a>
       </div>
     </details>
   );

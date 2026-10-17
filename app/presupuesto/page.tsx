@@ -7,8 +7,7 @@ import { toProv } from "@/lib/provenance/view";
 
 export const metadata: Metadata = { title: "Presupuesto 2027" };
 
-export default async function Presupuesto({ searchParams }: { searchParams: Promise<{ p?: string }> }) {
-  const { p } = await searchParams;
+export default function Presupuesto() {
   const views: PartidaView[] = partidas()
     .filter((x) => x.amount.status !== "pendiente" && x.variation.status !== "pendiente")
     .map((x) => ({
@@ -25,7 +24,7 @@ export default async function Presupuesto({ searchParams }: { searchParams: Prom
   return (
     <>
       <Header current="/presupuesto" />
-      <BudgetExplorer partidas={views} totalMiles={total.value as number} population={pop.value as number} initial={p} />
+      <BudgetExplorer partidas={views} totalMiles={total.value as number} population={pop.value as number} />
       <div className="wrap" style={{ paddingTop: 0 }}>
         <Footer />
       </div>

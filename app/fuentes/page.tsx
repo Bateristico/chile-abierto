@@ -3,7 +3,8 @@ import path from "node:path";
 import type { Metadata } from "next";
 import { Header, Footer } from "@/components/Header";
 import { Prov } from "@/components/Prov";
-import { loadFacts } from "@/lib/facts";
+import { loadFacts, snapshotInfo } from "@/lib/facts";
+import { aiSnapshot } from "@/lib/findings/rules";
 import { STATUS_ORDER } from "@/lib/provenance/types";
 import { toProv } from "@/lib/provenance/view";
 import { fmtFact, STATUS_HELP, STATUS_LABEL } from "@/lib/format";
@@ -28,6 +29,8 @@ export default function Fuentes() {
     return { ...c, last, issues };
   });
   const groups = [...new Set(facts.map((f) => f.domain))];
+  const snap = snapshotInfo();
+  const ai = aiSnapshot() as (ReturnType<typeof aiSnapshot> & { rejectedInsights?: { title: string; reason: string }[]; droppedQuestions?: { question: string; reason: string }[] }) | null;
 
   return (
     <>
@@ -65,6 +68,9 @@ export default function Fuentes() {
 
         <section className="card">
           <h2 style={{ fontSize: 24 }}>Conectores a fuentes oficiales</h2>
+          <p className="small" style={{ color: "var(--ink-2)" }}>
+            {snap ? `Última captura: ${new Date(snap.takenAt).toLocaleString("es-CL", { timeZone: "America/Santiago" })} (hora de Chile).` : "Aún no hay captura automática: el sitio usa los datos semilla verificados a mano."}
+          </p>
           <div className="scroll-x">
             <table className="ledger">
               <thead>
@@ -76,12 +82,43 @@ export default function Fuentes() {
                     <td><code>{c.id}</code></td>
                     <td>{c.description}{c.requires?.length ? <div className="tiny muted">Requiere {c.requires.join(", ")}</div> : null}</td>
                     <td>{c.last ? c.last.toISOString().slice(0, 10) : "Aún no ejecutado"}</td>
-                    <td>{c.issues.length ? <span className="check-bad">{c.issues.length} problemas en revisión</span> : c.last ? <span className="check-ok">Al día</span> : <span className="muted">Pendiente</span>}</td>
+                    <td>
+                      {(() => {
+                        const st = snap?.connectors.find((x) => x.id === c.id);
+                        if (c.issues.length) return <span className="check-bad">{c.issues.length} problemas en revisión</span>;
+                        if (st?.status === "error") return <span className="check-bad">No respondió en la última captura</span>;
+                        if (st?.status === "skipped") return <span className="muted">Sin credenciales</span>;
+                        return c.last ? <span className="check-ok">Al día</span> : <span className="muted">Pendiente</span>;
+                      })()}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+        </section>
+
+        <section className="card">
+          <h2 style={{ fontSize: 24 }}>Capa de inteligencia artificial</h2>
+          {ai ? (
+            <>
+              <p className="small" style={{ color: "var(--ink-2)" }}>
+                Generada el {new Date(ai.generatedAt).toLocaleString("es-CL", { timeZone: "America/Santiago" })} con {ai.model}. Publicados: {ai.insights.length} hallazgos y {ai.qa.length} respuestas.
+                Descartados por no pasar la verificación: {ai.rejectedInsights?.length ?? 0} hallazgos y {ai.droppedQuestions?.length ?? 0} respuestas.
+              </p>
+              {!!ai.rejectedInsights?.length && (
+                <details className="small">
+                  <summary style={{ cursor: "pointer", fontWeight: 700, minHeight: 32 }}>Ver lo descartado y por qué</summary>
+                  <ul style={{ margin: "8px 0 0", paddingLeft: 18, display: "flex", flexDirection: "column", gap: 6, color: "var(--ink-2)" }}>
+                    {ai.rejectedInsights.map((r, i) => <li key={i}>«{r.title}»: {r.reason}</li>)}
+                    {ai.droppedQuestions?.map((r, i) => <li key={`q${i}`}>Pregunta «{r.question}»: {r.reason}</li>)}
+                  </ul>
+                </details>
+              )}
+            </>
+          ) : (
+            <p className="small" style={{ color: "var(--ink-2)" }}>Esta copia no tiene capa de IA: se genera al construir el sitio con una clave de Anthropic.</p>
+          )}
         </section>
 
         {groups.map((g) => (
