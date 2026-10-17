@@ -27,7 +27,7 @@ function bestMatch(q: string, items: QA[]): QA | null {
   return score > 0 ? best : null;
 }
 
-export function SnapshotQA({ items, generatedAt, model }: { items: QA[]; generatedAt?: string; model?: string }) {
+export function SnapshotQA({ items, generatedAt, model, failed }: { items: QA[]; generatedAt?: string; model?: string; failed?: boolean }) {
   const [q, setQ] = useState("");
   const [sel, setSel] = useState<QA | null>(items[0] ?? null);
   const [noMatch, setNoMatch] = useState(false);
@@ -49,7 +49,11 @@ export function SnapshotQA({ items, generatedAt, model }: { items: QA[]; generat
       <span className="kicker on-night">Preguntas con datos verificados</span>
       <h2 id="qa-l" style={{ fontSize: "clamp(28px, 6.5cqi, 42px)", lineHeight: 1.08, maxWidth: "26ch" }}>Pregunta lo que quieras saber del presupuesto</h2>
       {items.length === 0 ? (
-        <p style={{ color: "#C9CAD3" }}>Esta copia del sitio no tiene respuestas generadas por IA. Se agregan al construir el sitio con una clave de Anthropic configurada.</p>
+        <p style={{ color: "#C9CAD3" }}>
+          {failed
+            ? <>La capa de IA no pudo generarse en esta captura. El motivo está en <a href="../fuentes/" style={{ color: "inherit" }}>Fuentes</a>.</>
+            : "Esta copia del sitio no tiene respuestas generadas por IA. Se agregan al construir el sitio con una clave de Anthropic configurada."}
+        </p>
       ) : (
         <>
           <form

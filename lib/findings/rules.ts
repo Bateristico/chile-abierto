@@ -196,6 +196,8 @@ export interface AiSnapshot {
   model: string;
   insights: ValidatedInsight[];
   qa: (import("../agents/ask").AskResult & { question: string })[];
+  /** API failures of the run (no secrets), shown on /fuentes. */
+  errors?: string[];
 }
 
 export function aiSnapshot(): AiSnapshot | null {

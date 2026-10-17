@@ -110,6 +110,12 @@ export default function Fuentes() {
                 Generada el {new Date(ai.generatedAt).toLocaleString("es-CL", { timeZone: "America/Santiago" })} con {ai.model}. Publicados: {ai.insights.length} hallazgos y {ai.qa.length} respuestas.
                 Descartados por no pasar la verificación: {ai.rejectedInsights?.length ?? 0} hallazgos y {ai.droppedQuestions?.length ?? 0} respuestas.
               </p>
+              {!!ai.errors?.length && (
+                <div className="small" role="status" style={{ borderLeft: "3px solid var(--accent)", paddingLeft: 10, margin: "8px 0", color: "var(--ink-2)" }}>
+                  <strong>La llamada a la API falló en esta captura:</strong>
+                  <ul style={{ margin: "4px 0 0", paddingLeft: 18 }}>{ai.errors.map((e, i) => <li key={i}><code>{e}</code></li>)}</ul>
+                </div>
+              )}
               {!!ai.rejectedInsights?.length && (
                 <details className="small">
                   <summary style={{ cursor: "pointer", fontWeight: 700, minHeight: 32 }}>Ver lo descartado y por qué</summary>

@@ -21,9 +21,25 @@ if (!process.env.ANTHROPIC_API_KEY) {
 const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-5-5";
 const client = new Anthropic();
 
-const { accepted, rejected } = await generateInsights(client, model);
-console.log(`Hallazgos IA: ${accepted.length} publicados, ${rejected.length} descartados.`);
-for (const r of rejected) console.log(`  ✗ ${r.title.slice(0, 80)} — ${r.reason}`);
+/** A short, secret-free description of an API failure, published on /fuentes so a failed run can be diagnosed. */
+function describe(e: unknown): string {
+  const err = e as { status?: number; error?: { error?: { type?: string; message?: string } }; message?: string };
+  const inner = err.error?.error;
+  const text = inner ? `${inner.type ?? "error"}: ${inner.message ?? ""}` : (err.message ?? String(e));
+  return `${err.status ? `HTTP ${err.status} · ` : ""}${text}`.replace(/sk-ant-[\w-]+/g, "[clave]").slice(0, 300);
+}
+
+const errors: string[] = [];
+let accepted: Awaited<ReturnType<typeof generateInsights>>["accepted"] = [];
+let rejected: Awaited<ReturnType<typeof generateInsights>>["rejected"] = [];
+try {
+  ({ accepted, rejected } = await generateInsights(client, model));
+  console.log(`Hallazgos IA: ${accepted.length} publicados, ${rejected.length} descartados.`);
+  for (const r of rejected) console.log(`  ✗ ${r.title.slice(0, 80)} — ${r.reason}`);
+} catch (e) {
+  errors.push(`Hallazgos: ${describe(e)}`);
+  console.error(`Hallazgos IA fallaron: ${describe(e)}`);
+}
 
 const qa = [];
 const dropped: { question: string; reason: string }[] = [];
@@ -33,7 +49,12 @@ for (const question of SNAPSHOT_QUESTIONS) {
     if (res.grounded && res.citations.length) qa.push({ question, ...res });
     else dropped.push({ question, reason: res.warnings.join(" ") || "Sin citas verificadas" });
   } catch (e) {
-    dropped.push({ question, reason: (e as Error).message });
+    dropped.push({ question, reason: describe(e) });
+    // The same failure on every question (bad key, no credit, unknown model): stop after the first one.
+    if ((e as { status?: number }).status) {
+      errors.push(`Preguntas: ${describe(e)}`);
+      break;
+    }
   }
 }
 console.log(`Preguntas: ${qa.length} respondidas con respaldo, ${dropped.length} descartadas.`);
@@ -41,6 +62,6 @@ console.log(`Preguntas: ${qa.length} respondidas con respaldo, ${dropped.length}
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(
   out,
-  JSON.stringify({ generatedAt: new Date().toISOString(), model, insights: accepted, rejectedInsights: rejected, qa, droppedQuestions: dropped }, null, 2) + "\n",
+  JSON.stringify({ generatedAt: new Date().toISOString(), model, insights: accepted, rejectedInsights: rejected, qa, droppedQuestions: dropped, errors }, null, 2) + "\n",
 );
 console.log(`→ ${path.relative(process.cwd(), out)}`);

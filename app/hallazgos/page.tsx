@@ -20,7 +20,7 @@ export default function Hallazgos() {
     <>
       <Header current="/hallazgos" />
       <main className="wrap">
-        <SnapshotQA items={snap?.qa ?? []} generatedAt={snap?.generatedAt} model={snap?.model} />
+        <SnapshotQA items={snap?.qa ?? []} generatedAt={snap?.generatedAt} model={snap?.model} failed={!!snap?.errors?.length} />
         <section className="ctx" aria-label="Contexto de hoy">
           {ctx.map((c) => (
             <div key={c.id}>
