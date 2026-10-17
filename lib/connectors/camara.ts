@@ -23,7 +23,7 @@ const parser = new XMLParser({
   attributeNamePrefix: "@_",
   removeNSPrefix: true,
   textNodeName: "#text",
-  isArray: (name) => ["Diputado", "Votacion", "Voto", "Militancia"].includes(name),
+  isArray: (name) => ["Diputado", "DiputadoPeriodo", "Votacion", "Voto", "Militancia"].includes(name),
   parseTagValue: true,
 });
 
@@ -41,6 +41,53 @@ export function findArray(node: unknown, key: string): unknown[] {
     if (found.length) return found;
   }
   return [];
+}
+
+/** Every node stored under `key` anywhere in the tree (findArray stops at the first array). */
+export function collectAll(node: unknown, key: string, out: unknown[] = []): unknown[] {
+  if (!node || typeof node !== "object") return out;
+  if (Array.isArray(node)) {
+    for (const v of node) collectAll(v, key, out);
+    return out;
+  }
+  const obj = node as Record<string, unknown>;
+  for (const [k, v] of Object.entries(obj)) {
+    if (k === key) {
+      if (Array.isArray(v)) out.push(...v);
+      else out.push(v);
+    } else collectAll(v, key, out);
+  }
+  return out;
+}
+
+export interface CurrentDeputy {
+  id: number;
+  nombre: string;
+  sexo: string;
+  partido: { alias: string; nombre: string };
+}
+
+const isOpen = (end: unknown) => end === undefined || end === null || end === "" || typeof end === "object" || Date.parse(String(end)) > Date.now();
+
+/**
+ * Deputies in office from retornarDiputadosPeriodoActual. The service wraps each <Diputado> in a <DiputadoPeriodo>,
+ * so they are collected from anywhere in the tree. Current party = the open militancia (no end date), else the latest.
+ */
+export function parseDeputies(xml: Buffer | string): CurrentDeputy[] {
+  const seen = new Map<number, CurrentDeputy>();
+  for (const raw of collectAll(parseXml(xml), "Diputado")) {
+    const d = raw as Record<string, unknown>;
+    const id = Number(d.Id);
+    if (!Number.isFinite(id) || seen.has(id)) continue;
+    const ms = collectAll(d.Militancias, "Militancia") as Record<string, unknown>[];
+    const open = ms.filter((m) => isOpen(m.FechaTermino));
+    const pick = (open.length ? open : ms).sort((a, b) => String(b.FechaInicio).localeCompare(String(a.FechaInicio)))[0];
+    const p = (pick?.Partido ?? {}) as Record<string, unknown>;
+    const sexo = d.Sexo && typeof d.Sexo === "object" ? String((d.Sexo as Record<string, unknown>)["#text"] ?? "") : String(d.Sexo ?? "");
+    const nombre = [d.Nombre, d.ApellidoPaterno, d.ApellidoMaterno].filter((x) => x && typeof x !== "object").join(" ");
+    seen.set(id, { id, nombre, sexo, partido: { alias: String(p.Alias ?? p.Id ?? "SIN"), nombre: String(p.Nombre ?? "Sin información") } });
+  }
+  return [...seen.values()];
 }
 
 export const DiputadoSchema = z
@@ -112,8 +159,41 @@ export const camara: Connector = {
     const facts: FactInput[] = [];
 
     const dipSnap = await fetchSnapshot(CAMARA_ENDPOINTS.diputadosActuales(), "camara");
-    const diputados = findArray(parseXml(dipSnap.body), "Diputado").map((d) => DiputadoSchema.parse(d));
+    const diputados = parseDeputies(dipSnap.body);
     if (diputados.length !== EXPECTED_DEPUTIES) issues.push(`Se esperaban ${EXPECTED_DEPUTIES} diputados en ejercicio y llegaron ${diputados.length}.`);
+    const asOf = dipSnap.retrievedAt.slice(0, 10);
+    const mujeres = diputados.filter((d) => /femenino/i.test(d.sexo)).length;
+    facts.push({
+      id: "camara.diputadas",
+      label: "Diputadas en ejercicio",
+      definition: "Integrantes de la Cámara en ejercicio registradas con sexo femenino en el servicio de datos abiertos.",
+      value: mujeres,
+      unit: "personas",
+      asOf,
+      domain: "congreso",
+      sources: [src(dipSnap, "Datos abiertos Cámara · retornarDiputadosPeriodoActual", "DiputadoPeriodo[].Diputado.Sexo", String(mujeres), mujeres)],
+    });
+    // Composition by current party (militancia without end date). Parties are the Cámara's own aliases.
+    const byParty = new Map<string, { alias: string; nombre: string; n: number }>();
+    for (const d of diputados) {
+      const k = d.partido.alias;
+      byParty.set(k, { ...d.partido, n: (byParty.get(k)?.n ?? 0) + 1 });
+    }
+    const partidos = [...byParty.values()].sort((a, b) => b.n - a.n);
+    if (partidos.reduce((a, p) => a + p.n, 0) !== diputados.length) issues.push("La composición por partido no suma el total de diputados.");
+    for (const p of partidos) {
+      facts.push({
+        id: `camara.partido.${p.alias.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+        label: `Diputados de ${p.nombre} (${p.alias})`,
+        definition: "Diputadas y diputados en ejercicio cuya militancia vigente en el registro de la Cámara corresponde a este partido; IND son independientes.",
+        value: p.n,
+        unit: "personas",
+        asOf,
+        domain: "congreso",
+        sources: [src(dipSnap, "Datos abiertos Cámara · retornarDiputadosPeriodoActual", `Militancia vigente = ${p.alias}`, String(p.n), p.n)],
+      });
+    }
+    notes.push(`${diputados.length} diputados, ${mujeres} mujeres, ${partidos.length} partidos`);
     facts.push({
       id: "camara.diputados_en_ejercicio",
       label: "Diputadas y diputados en ejercicio",
@@ -167,11 +247,22 @@ export const camara: Connector = {
     if (quarantined.length) notes.push(`${quarantined.length} en cuarentena por no cuadrar: ${quarantined.slice(0, 5).join(" | ")}`);
     // If most votes fail, the parser (not the data) is wrong: block everything.
     if (quarantined.length > Math.max(5, checked * 0.05)) issues.push(`${quarantined.length} de ${checked} votaciones no cuadran: probable cambio de formato.`);
+    const cuadradas = checked - quarantined.length - withoutDetail;
+    facts.push({
+      id: `camara.votaciones_cuadradas_${year}`,
+      label: `Votaciones de ${year} con votos individuales que cuadran`,
+      definition: "Votaciones cuyo detalle de votos individuales suma exactamente los totales a favor, en contra y abstención que publica la Cámara. Las que no cuadran quedan en cuarentena.",
+      value: cuadradas,
+      unit: "conteo",
+      asOf: votSnap.retrievedAt.slice(0, 10),
+      domain: "congreso",
+      sources: [src(votSnap, `Datos abiertos Cámara · retornarVotacionDetalle (${checked} votaciones)`, "Votacion.Votos vs TotalSi/TotalNo/TotalAbstencion")],
+    });
 
     return {
       connector: this.id,
       facts,
-      records: { diputados, votaciones, votos: votes, cuarentena: quarantined },
+      records: { diputados, partidos, votaciones, votos: votes, cuarentena: quarantined },
       issues,
       notes,
     };

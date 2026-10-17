@@ -5,6 +5,7 @@ import { Prov } from "./Prov";
 import type { ProvInfo } from "@/lib/provenance/view";
 import type { Finding } from "@/lib/findings/rules";
 import { STATUS_LABEL } from "@/lib/format";
+import { TopicIcon, topicOf } from "./Art";
 
 const LEVEL: Record<string, number> = { oficial: 3, corroborado: 2, secundario: 1, ejemplo: 0, pendiente: 0 };
 
@@ -34,7 +35,8 @@ export function FindingsExplorer({ findings, provs }: { findings: Finding[]; pro
   return (
     <section className="row">
       <div style={{ flex: "1 1 380px", minWidth: 0, display: "flex", flexDirection: "column", gap: 12 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 800 }}>Hallazgos</h1>
+        <span className="kicker">Cruces entre datos verificados</span>
+        <h1 className="sec-title">Hallazgos</h1>
         <div role="group" aria-label="Filtrar" style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
           <button type="button" className="pill" aria-pressed={filter === null} onClick={() => setFilter(null)}>Todos</button>
           {crosses.map((c) => (
@@ -43,16 +45,19 @@ export function FindingsExplorer({ findings, provs }: { findings: Finding[]; pro
         </div>
         {visible.map((f) => (
           <button key={f.id} type="button" className="fcard" aria-pressed={sel === f.id} onClick={() => setSel(f.id)}>
-            <span style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", justifyContent: "space-between" }}>
-              <span className="small" style={{ color: "var(--ink-2)" }}>{f.cross}</span>
-              <span style={{ fontSize: 13, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: f.origin === "ejemplo" ? "#eceef1" : "var(--blue-tint)", color: f.origin === "ejemplo" ? "var(--ink-2)" : "var(--blue-deep)" }}>
-                {f.origin === "ejemplo" ? "Ejemplo" : f.origin === "ia" ? "Propuesto por IA, verificado" : "Calculado con reglas"}
+            <span className="thumb" style={{ background: topicOf(f.cross, f.origin).tint }}><TopicIcon topic={topicOf(f.cross, f.origin)} size={30} /></span>
+            <span style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
+              <span style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", justifyContent: "space-between" }}>
+                <span className="tag" style={{ color: topicOf(f.cross, f.origin).ink }}>{f.cross}</span>
+                <span style={{ fontSize: 12, fontWeight: 700, padding: "2px 9px", borderRadius: 999, background: f.origin === "ejemplo" ? "var(--line-soft)" : f.origin === "ia" ? "var(--blue-tint)" : "var(--mint)", color: f.origin === "ejemplo" ? "var(--ink-2)" : f.origin === "ia" ? "var(--blue)" : "var(--mint-ink)" }}>
+                  {f.origin === "ejemplo" ? "Ejemplo" : f.origin === "ia" ? "IA, verificado" : "Reglas"}
+                </span>
               </span>
-            </span>
-            <strong style={{ fontSize: 17, lineHeight: 1.35 }}>{f.title}</strong>
-            <span className="small muted" style={{ display: "flex", gap: 10, alignItems: "center" }}>
-              <Meter status={f.status} />
-              Nivel: {STATUS_LABEL[f.status].toLowerCase()}
+              <strong style={{ fontFamily: "var(--font-display)", fontSize: 17, lineHeight: 1.3 }}>{f.title}</strong>
+              <span className="tiny muted" style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                <Meter status={f.status} />
+                Nivel: {STATUS_LABEL[f.status].toLowerCase()}
+              </span>
             </span>
           </button>
         ))}
@@ -63,7 +68,7 @@ export function FindingsExplorer({ findings, provs }: { findings: Finding[]; pro
           <span style={{ color: "var(--ink-2)" }}>{s.cross}</span>
           {s.mentionsPeople && <span style={{ fontSize: 13, fontWeight: 700, padding: "3px 10px", borderRadius: 999, background: "var(--copper-tint)", color: "var(--copper-deep)" }}>Coincidencia, no acusación</span>}
         </div>
-        <h2 id="ftitle" style={{ fontSize: "clamp(23px, 5.4cqi, 30px)", lineHeight: 1.15, fontWeight: 800 }}>{s.title}</h2>
+        <h2 id="ftitle" style={{ fontSize: "clamp(24px, 5.4cqi, 34px)", lineHeight: 1.12 }}>{s.title}</h2>
         <p style={{ fontSize: 17, color: "var(--ink-2)" }}>{s.summary}</p>
 
         <figure style={{ margin: 0, display: "flex", flexDirection: "column", gap: 8 }}>
@@ -78,7 +83,7 @@ export function FindingsExplorer({ findings, provs }: { findings: Finding[]; pro
                 </span>
                 {i < s.chain.length - 1 && (
                   <span className="edge">
-                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="#4A5566" strokeWidth="1.6" /></svg>
+                    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" fill="none" stroke="#5E5F6B" strokeWidth="1.6" /></svg>
                     {s.edges[i] && <span>{s.edges[i]}</span>}
                   </span>
                 )}

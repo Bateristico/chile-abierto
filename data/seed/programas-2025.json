@@ -1,0 +1,15 @@
+{
+  "eleccion": "Elección presidencial 2025",
+  "nota": "Programas de gobierno que cada candidatura presidencial adjuntó a su declaración ante el Servel. Fuente para la extracción de promesas (npm run extract-promises -- --url <pdf> --publisher servel).",
+  "retrievedAt": "2026-10-17",
+  "programas": [
+    { "candidatura": "Eduardo Artés", "slug": "eduardo-artes", "url": "https://www.servel.cl/wp-content/uploads/2025/09/EDUARDO-ANTONIO-ARTES-BRICHETTI.pdf" },
+    { "candidatura": "Marco Enríquez-Ominami", "slug": "marco-enriquez-ominami", "url": "https://www.servel.cl/wp-content/uploads/2025/09/MARCO-ANTONIO-ENRIQUEZ-OMINAMI-GUMUCIO.pdf" },
+    { "candidatura": "Jeannette Jara", "slug": "jeannette-jara", "url": "https://www.servel.cl/wp-content/uploads/2025/09/JEANNETTE-JARA-ROMAN.pdf" },
+    { "candidatura": "Johannes Kaiser", "slug": "johannes-kaiser", "url": "https://www.servel.cl/wp-content/uploads/2025/09/JOHANNES-KAISER-BARENTS-VON-HOHENHAGEN.pdf" },
+    { "candidatura": "José Antonio Kast", "slug": "jose-antonio-kast", "url": "https://www.servel.cl/wp-content/uploads/2025/09/JOSE-ANTONIO-KAST-RIST.pdf" },
+    { "candidatura": "Evelyn Matthei", "slug": "evelyn-matthei", "url": "https://www.servel.cl/wp-content/uploads/2025/09/EVELYN-MATTHEI-FORNET.pdf" },
+    { "candidatura": "Harold Mayne-Nicholls", "slug": "harold-mayne-nicholls", "url": "https://www.servel.cl/wp-content/uploads/2025/09/HAROLD-MAYNE-NICHOLLS-SECUL.pdf" },
+    { "candidatura": "Franco Parisi", "slug": "franco-parisi", "url": "https://www.servel.cl/wp-content/uploads/2025/09/FRANCO-PARISI-FERNANDEZ.pdf" }
+  ]
+}

@@ -37,6 +37,7 @@ export default function Fuentes() {
       <Header current="/fuentes" />
       <main className="wrap">
         <section className="card" style={{ gap: 20 }}>
+          <span className="kicker">Fuentes y método</span>
           <h1 style={{ fontSize: "clamp(30px, 7cqi, 44px)", lineHeight: 1.08, fontWeight: 800, maxWidth: "20ch" }}>Cómo verificamos cada cifra</h1>
           <p style={{ fontSize: 18, color: "var(--ink-2)", maxWidth: "46em" }}>
             Cada número de Chile Abierto viene con su fuente, la fecha en que lo consultamos y las comprobaciones que pasó. Si una comprobación falla, el número no se
@@ -80,14 +81,17 @@ export default function Fuentes() {
                 {connectorState.map((c) => (
                   <tr key={c.id}>
                     <td><code>{c.id}</code></td>
-                    <td>{c.description}{c.requires?.length ? <div className="tiny muted">Requiere {c.requires.join(", ")}</div> : null}</td>
+                    <td>{c.description}{c.requires?.length ? <div className="tiny muted">Requiere {c.requires.join(", ")}</div> : null}
+                      {c.requiresAnyOf?.length ? <div className="tiny muted">Requiere {c.requiresAnyOf.map((s) => s.join(" + ")).join(" o ")}</div> : null}</td>
                     <td>{c.last ? c.last.toISOString().slice(0, 10) : "Aún no ejecutado"}</td>
                     <td>
                       {(() => {
                         const st = snap?.connectors.find((x) => x.id === c.id);
-                        if (c.issues.length) return <span className="check-bad">{c.issues.length} problemas en revisión</span>;
+                        if (c.issues.length) return <span className="check-bad">{c.issues.length} problemas en revisión<div className="tiny">{c.issues.slice(0, 2).join(" · ")}</div></span>;
+                        if (st?.status === "issues") return <span className="check-bad">{st.detail}</span>;
                         if (st?.status === "error") return <span className="check-bad">No respondió en la última captura</span>;
                         if (st?.status === "skipped") return <span className="muted">Sin credenciales</span>;
+                        if (st?.status === "ok") return <span className="check-ok">Al día<div className="tiny muted">{st.detail.length > 160 ? st.detail.slice(0, 160) + "…" : st.detail}</div></span>;
                         return c.last ? <span className="check-ok">Al día</span> : <span className="muted">Pendiente</span>;
                       })()}
                     </td>

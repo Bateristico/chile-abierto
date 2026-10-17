@@ -1,30 +1,47 @@
 import Link from "next/link";
 import { loadFacts, dataMode, snapshotInfo } from "@/lib/facts";
 import { href } from "@/lib/base";
-import { fmtDate } from "@/lib/format";
+import { fmtDate, fmtEditionDate } from "@/lib/format";
 
 const NAV = [
-  { href: "/", label: "Inicio" },
+  { href: "/", label: "Portada" },
   { href: "/presupuesto", label: "Presupuesto" },
-  { href: "/promesas", label: "Promesas vs votos" },
+  { href: "/promesas", label: "Promesas y votos" },
   { href: "/hallazgos", label: "Hallazgos" },
   { href: "/fuentes", label: "Fuentes" },
 ];
 
 export function Header({ current }: { current: string }) {
-  const facts = loadFacts();
+  const facts = loadFacts().filter((f) => f.status !== "pendiente");
   const official = facts.filter((f) => f.status === "oficial").length;
   const demo = dataMode() === "demo";
+  const snap = snapshotInfo();
+  const edition = snap ? new Date(snap.takenAt) : new Date();
+  const allOk = snap ? snap.ok === snap.total : false;
   return (
     <header className="hdr-bar">
       <div className="hdr">
-        <Link href="/" className="brand">
-          <svg width="12" height="30" viewBox="0 0 12 30" aria-hidden="true">
-            <rect width="12" height="30" rx="6" fill="#3046D9" />
-            <path d="M0 10h12M0 20h12" stroke="#fff" strokeWidth="2" />
-          </svg>
-          <span>Chile Abierto</span>
-        </Link>
+        <div className="hdr-top">
+          <Link href="/" className="brand" aria-label="Chile Abierto, portada">
+            <span className="brand-mark" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z" fill="#fff" /></svg>
+            </span>
+            <span>Chile Abierto</span>
+          </Link>
+          <div className="hdr-meta">
+            <span className="hdr-date">{fmtEditionDate(edition)} · Edición diaria</span>
+            <Link href="/fuentes" className={`hdr-chip${allOk || !demo ? " ok" : ""}`} title="Cómo verificamos cada dato">
+              <span className="dotlive pulse" aria-hidden="true" />
+              {snap ? `${snap.ok} de ${snap.total} fuentes al día · ${official} datos oficiales` : `${official} datos oficiales${demo ? " · con ejemplos" : ""}`}
+            </Link>
+            <Link href="/hallazgos#preguntas" className="icon-btn" aria-label="Buscar en las preguntas respondidas">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M20 20l-3.5-3.5" />
+              </svg>
+            </Link>
+          </div>
+        </div>
         <nav aria-label="Secciones" className="hdr-nav">
           {NAV.map((n) => (
             <Link key={n.href} href={n.href} aria-current={current === n.href ? "page" : undefined}>
@@ -32,9 +49,6 @@ export function Header({ current }: { current: string }) {
             </Link>
           ))}
         </nav>
-        <Link href="/fuentes" className={`hdr-chip${demo ? "" : " ok"}`} title="Cómo verificamos cada dato">
-          {demo ? `${official} datos oficiales · con ejemplos` : `${facts.length} datos verificados`}
-        </Link>
       </div>
     </header>
   );
@@ -47,8 +61,8 @@ export function Footer() {
       <span style={{ flexBasis: "100%" }}>
         {snap ? `Datos al ${fmtDate(snap.takenAt)}: ${snap.ok} de ${snap.total} conectores oficiales al día.` : "Datos semilla verificados manualmente; aún no se ejecuta una ingesta automática."} El sitio se reconstruye cada día.
       </span>
-      <span>Fuentes: DIPRES, Cámara de Diputadas y Diputados, Senado, BCN, Servel, ChileCompra, Consejo para la Transparencia, Banco Central, INE.</span>
-      <span style={{ display: "flex", gap: 16 }}>
+      <span>Fuentes: DIPRES · Cámara de Diputadas y Diputados · Servel · Banco Central · ChileCompra · INE · Consejo para la Transparencia</span>
+      <span style={{ display: "flex", gap: 18 }}>
         <Link href="/fuentes">Cómo verificamos</Link>
         <a href={href("/datos/facts.json")}>Datos abiertos (JSON)</a>
       </span>

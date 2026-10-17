@@ -122,6 +122,12 @@ export function getFact(id: string): Fact {
   return f;
 }
 
+/** Like getFact, but for data that only exists once a connector has run (e.g. Cámara composition). */
+export function maybeFact(id: string): Fact | undefined {
+  const f = loadFacts().find((x) => x.id === id);
+  return f && f.status !== "pendiente" ? f : undefined;
+}
+
 export function factsByPrefix(prefix: string): Fact[] {
   return loadFacts().filter((f) => f.id.startsWith(prefix));
 }

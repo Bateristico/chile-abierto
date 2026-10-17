@@ -16,6 +16,12 @@ export function Prov({ info, align = "left" }: { info: ProvInfo; align?: "left" 
             <path d="M5 12l5 5L20 7" />
           </svg>
         )}
+        {info.status === "corroborado" && (
+          <svg width="11" height="11" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="3" />
+            <path d="M12 3a9 9 0 010 18z" fill="currentColor" />
+          </svg>
+        )}
         {STATUS_LABEL[info.status]}
       </summary>
       <div className="prov-pop" role="group" aria-label={`Fuentes de ${info.label}`}>

@@ -13,7 +13,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "ai-snapshot": "tsx scripts/ai-snapshot.ts",
-    "serve": "npx --yes serve out"
+    "serve": "npx --yes serve out",
+    "extract-programs": "tsx scripts/extract-programs.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

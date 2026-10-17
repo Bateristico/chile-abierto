@@ -7,17 +7,17 @@ import { fmtDate } from "@/lib/format";
 
 type StatusKey = "c" | "u" | "e" | "i" | "n";
 const ST: Record<StatusKey, { label: string; bg: string; fg: string; ring: string }> = {
-  c: { label: "Cumplida", bg: "#1F2FA8", fg: "#fff", ring: "#1F2FA8" },
-  u: { label: "En curso", bg: "#A9B4F1", fg: "#1C2430", ring: "#A9B4F1" },
-  e: { label: "Estancada", bg: "#9AA4B2", fg: "#1C2430", ring: "#9AA4B2" },
-  i: { label: "Incumplida", bg: "#A9532B", fg: "#fff", ring: "#A9532B" },
-  n: { label: "Aún no se puede evaluar", bg: "#fff", fg: "#1C2430", ring: "#9AA4B2" },
+  c: { label: "Cumplida", bg: "#3B3486", fg: "#fff", ring: "#3B3486" },
+  u: { label: "En curso", bg: "#B9B3EE", fg: "#16161D", ring: "#B9B3EE" },
+  e: { label: "Estancada", bg: "#9A9BA6", fg: "#16161D", ring: "#9A9BA6" },
+  i: { label: "Incumplida", bg: "#B5362E", fg: "#fff", ring: "#B5362E" },
+  n: { label: "Aún no se puede evaluar", bg: "#fff", fg: "#16161D", ring: "#9A9BA6" },
 };
 const ORDER: StatusKey[] = ["c", "u", "e", "i", "n"];
 const TONE: Record<string, [string, string, string, string]> = {
-  "a favor": ["#3046D9", "#DCE3FB", "#1F2FA8", "Va en línea con la promesa"],
-  "en contra": ["#A9532B", "#F6E3D9", "#7A3517", "Va en contra de la promesa"],
-  contexto: ["#9AA4B2", "#EEF1F4", "#3A4554", "Contexto, no es un voto"],
+  "a favor": ["#3B3486", "#E7E5FA", "#3B3486", "Va en línea con la promesa"],
+  "en contra": ["#E0584E", "#FCE4E2", "#8E2B24", "Va en contra de la promesa"],
+  contexto: ["#9A9BA6", "#F1F2F5", "#3F3F4A", "Contexto, no es un voto"],
 };
 
 export interface PromiseData {
@@ -61,7 +61,7 @@ export function PromiseExplorer({ data, demoProv }: { data: PromiseData; demoPro
 
   return (
     <main className="wrap">
-      <div style={{ background: "#FFF4E5", border: "1px solid #F0C99A", borderRadius: 12, padding: "12px 16px", display: "flex", flexWrap: "wrap", gap: "8px 16px", alignItems: "center", justifyContent: "space-between", color: "#6B3A0E" }}>
+      <div style={{ background: "#FDF0D5", border: "1px solid #F3D38A", borderRadius: 12, padding: "12px 16px", display: "flex", flexWrap: "wrap", gap: "8px 16px", alignItems: "center", justifyContent: "space-between", color: "#8A5A00" }}>
         <span className="small">
           <strong>Persona y datos de ejemplo.</strong> Esta vista se llena con las votaciones reales de la Cámara y con promesas cuya cita se verificó textual en el
           programa original, cuando corren los conectores.
@@ -85,9 +85,9 @@ export function PromiseExplorer({ data, demoProv }: { data: PromiseData; demoPro
           </div>
           <div style={{ flex: "1 1 260px", display: "flex", gap: 18, alignItems: "center" }}>
             <svg width="112" height="112" viewBox="0 0 112 112" role="img" aria-label={`${pct} por ciento de consistencia`}>
-              <circle cx="56" cy="56" r="46" fill="none" stroke="#EEF1F4" strokeWidth="14" />
-              <circle cx="56" cy="56" r="46" fill="none" stroke="#3046D9" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${(circ * pct) / 100} ${circ}`} transform="rotate(-90 56 56)" />
-              <text x="56" y="63" textAnchor="middle" fontFamily="Bricolage Grotesque, sans-serif" fontSize="26" fontWeight="800" fill="#1C2430">{pct}%</text>
+              <circle cx="56" cy="56" r="46" fill="none" stroke="#F1F2F5" strokeWidth="14" />
+              <circle cx="56" cy="56" r="46" fill="none" stroke="#3B3486" strokeWidth="14" strokeLinecap="round" strokeDasharray={`${(circ * pct) / 100} ${circ}`} transform="rotate(-90 56 56)" />
+              <text x="56" y="63" textAnchor="middle" fontFamily="Playfair Display, serif" fontSize="26" fontWeight="800" fill="#16161D">{pct}%</text>
             </svg>
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
               <strong>Consistencia</strong>

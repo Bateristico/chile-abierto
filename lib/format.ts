@@ -37,6 +37,12 @@ export function fmtDate(iso: string, opts: { short?: boolean } = {}): string {
   return opts.short ? `${d} ${month.slice(0, 3)}` : `${d} de ${month} de ${y}`;
 }
 
+/** «Sábado 17 de octubre de 2026», in Chilean time. */
+export function fmtEditionDate(d: Date): string {
+  const s = new Intl.DateTimeFormat("es-CL", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "America/Santiago" }).format(d);
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export function fmtFact(f: Fact): string {
   const v = f.value;
   if (typeof v === "string") return f.unit === "fecha" ? fmtDate(v) : v;

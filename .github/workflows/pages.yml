@@ -47,6 +47,15 @@ jobs:
           CAMARA_MAX_DETAIL: ${{ vars.CAMARA_MAX_DETAIL || '5000' }}
         run: npm run ingest
 
+      # 1b. Promises from the presidential programs filed with the Servel (opt-in: set the variable EXTRACT_PROMISES=true).
+      - name: Promesas desde programas del Servel
+        if: ${{ vars.EXTRACT_PROMISES == 'true' }}
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'claude-sonnet-5-5' }}
+        run: npm run extract-programs
+
       # 2. AI layer over the verified snapshot: insights and pre-answered questions, kept only if every number checks out.
       - name: Hallazgos y respuestas con IA
         continue-on-error: true

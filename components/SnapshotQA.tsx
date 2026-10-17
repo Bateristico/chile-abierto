@@ -45,10 +45,11 @@ export function SnapshotQA({ items, generatedAt, model }: { items: QA[]; generat
   }, [items]);
 
   return (
-    <section className="ask" aria-labelledby="qa-l">
-      <h2 id="qa-l" style={{ fontSize: "clamp(26px, 6.5cqi, 36px)", lineHeight: 1.1, fontWeight: 800, maxWidth: "22ch" }}>Preguntas respondidas con datos verificados</h2>
+    <section className="ask rise" id="preguntas" aria-labelledby="qa-l">
+      <span className="kicker on-night">Preguntas con datos verificados</span>
+      <h2 id="qa-l" style={{ fontSize: "clamp(28px, 6.5cqi, 42px)", lineHeight: 1.08, maxWidth: "26ch" }}>Pregunta lo que quieras saber del presupuesto</h2>
       {items.length === 0 ? (
-        <p style={{ color: "#C9D0DA" }}>Esta copia del sitio no tiene respuestas generadas por IA. Se agregan al construir el sitio con una clave de Anthropic configurada.</p>
+        <p style={{ color: "#C9CAD3" }}>Esta copia del sitio no tiene respuestas generadas por IA. Se agregan al construir el sitio con una clave de Anthropic configurada.</p>
       ) : (
         <>
           <form
@@ -62,7 +63,7 @@ export function SnapshotQA({ items, generatedAt, model }: { items: QA[]; generat
           >
             <label htmlFor="qa" className="sr-only">Buscar una pregunta</label>
             <input id="qa" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Busca: deuda, salud, por persona…" />
-            <button type="submit" className="btn" style={{ minHeight: 58, borderRadius: 14, background: "var(--blue-soft)", border: 0, fontWeight: 700, fontSize: 17, padding: "0 26px" }}>Buscar</button>
+            <button type="submit" className="btn" style={{ minHeight: 56, borderRadius: 999, background: "var(--accent)", color: "#fff", border: 0, fontWeight: 700, fontSize: 17, padding: "0 26px" }}>Buscar</button>
           </form>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {matches.map((it) => (
@@ -71,28 +72,28 @@ export function SnapshotQA({ items, generatedAt, model }: { items: QA[]; generat
               </button>
             ))}
           </div>
-          {noMatch && <p role="status" style={{ color: "#F6C9B3" }}>No hay una respuesta preparada para esa pregunta. Prueba con una de la lista o revisa los hallazgos de abajo.</p>}
+          {noMatch && <p role="status" style={{ color: "#FFB4AC" }}>No hay una respuesta preparada para esa pregunta. Prueba con una de la lista o revisa los hallazgos de abajo.</p>}
           {sel && (
-            <div aria-live="polite" style={{ background: "#263040", borderRadius: 16, padding: 22, display: "flex", flexWrap: "wrap", gap: 24 }}>
+            <div aria-live="polite" style={{ background: "#2A2A35", borderRadius: 24, padding: 22, display: "flex", flexWrap: "wrap", gap: 24 }}>
               <div style={{ flex: "1 1 340px", display: "flex", flexDirection: "column", gap: 12 }}>
-                <span className="small" style={{ color: "#C9D0DA" }}>{sel.question}</span>
-                <p style={{ fontSize: 19, lineHeight: 1.5, whiteSpace: "pre-wrap" }}>{sel.answer.replace(/\s*\[[a-z0-9_.-]+\]/g, "")}</p>
-                <span className="small" style={{ color: "#A9B4F1", fontWeight: 700 }}>✓ Cada cifra coincide con un dato verificado</span>
-                {sel.warnings.map((w) => <p key={w} className="small" style={{ color: "#F6C9B3" }}>{w}</p>)}
+                <span className="small" style={{ color: "#C9CAD3" }}>{sel.question}</span>
+                <p style={{ fontFamily: "var(--font-display)", fontSize: 21, lineHeight: 1.45, whiteSpace: "pre-wrap" }}>{sel.answer.replace(/\s*\[[a-z0-9_.-]+\]/g, "")}</p>
+                <span className="small" style={{ color: "#B9B3EE", fontWeight: 700 }}>✓ Cada cifra coincide con un dato verificado</span>
+                {sel.warnings.map((w) => <p key={w} className="small" style={{ color: "#FFB4AC" }}>{w}</p>)}
               </div>
               <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", gap: 14 }}>
-                <strong className="small" style={{ color: "#C9D0DA" }}>Datos usados</strong>
-                <ul className="small" style={{ margin: 0, paddingLeft: 18, color: "#C9D0DA", display: "flex", flexDirection: "column", gap: 6 }}>
+                <strong className="small" style={{ color: "#C9CAD3" }}>Datos usados</strong>
+                <ul className="small" style={{ margin: 0, paddingLeft: 18, color: "#C9CAD3", display: "flex", flexDirection: "column", gap: 6 }}>
                   {sel.citations.map((c) => (
                     <li key={c.id}>
                       {c.label}: <strong style={{ color: "#fff" }}>{c.value}</strong> ({STATUS_LABEL[c.status]?.toLowerCase() ?? c.status}) ·{" "}
                       {c.sources.map((s, i) => (
-                        <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: "#A9B4F1", marginRight: 6 }}>{s.name}</a>
+                        <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: "#B9B3EE", marginRight: 6 }}>{s.name}</a>
                       ))}
                     </li>
                   ))}
                 </ul>
-                <details className="small" style={{ color: "#C9D0DA" }}>
+                <details className="small" style={{ color: "#C9CAD3" }}>
                   <summary style={{ cursor: "pointer", fontWeight: 700, minHeight: 32 }}>Cómo se llegó a la respuesta</summary>
                   <ol style={{ margin: "8px 0 0", paddingLeft: 18, display: "flex", flexDirection: "column", gap: 6 }}>
                     {sel.steps.map((s, i) => <li key={i}><strong style={{ color: "#fff" }}>{s.agent}:</strong> {s.did}</li>)}
@@ -102,7 +103,7 @@ export function SnapshotQA({ items, generatedAt, model }: { items: QA[]; generat
             </div>
           )}
           {generatedAt && (
-            <p className="tiny" style={{ color: "#9AA4B2" }}>
+            <p className="tiny" style={{ color: "#A9AAB6" }}>
               Respuestas generadas el {fmtDate(generatedAt)}{model ? ` con ${model}` : ""} sobre los datos de ese día. Se regeneran con cada actualización del sitio; solo se
               publican las que pasan la verificación de cifras.
             </p>

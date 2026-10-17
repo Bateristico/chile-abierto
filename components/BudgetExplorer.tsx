@@ -74,8 +74,8 @@ export function BudgetExplorer({ partidas, totalMiles, population }: { partidas:
       <main className="wrap">
         <section style={{ display: "flex", flexWrap: "wrap", gap: "12px 40px", alignItems: "flex-end", justifyContent: "space-between" }}>
           <div style={{ flex: "999 1 520px", display: "flex", flexDirection: "column", gap: 8 }}>
-            <span className="muted">32 partidas · sin Tesoro Público</span>
-            <h1 style={{ fontSize: "clamp(28px, 6cqi, 44px)", lineHeight: 1.08, fontWeight: 800, letterSpacing: "-0.03em", maxWidth: "22ch" }}>
+            <span className="kicker">Proyecto 2027 · 32 partidas · sin Tesoro Público</span>
+            <h1 style={{ fontSize: "clamp(28px, 6cqi, 44px)", lineHeight: 1.08, fontWeight: 700, maxWidth: "22ch" }}>
               {s.short} recibe {amount(s.miles)}: {fmtPct(share)} del gasto de los ministerios.
             </h1>
           </div>
@@ -88,14 +88,14 @@ export function BudgetExplorer({ partidas, totalMiles, population }: { partidas:
         <section className="row" style={{ alignItems: "stretch" }}>
           <div className="card" style={{ flex: "999 1 600px", minWidth: 0, padding: 22, gap: 14 }}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px 16px", justifyContent: "space-between", alignItems: "center" }}>
-              <h2 style={{ fontSize: 22 }}>Por partida</h2>
+              <h2 style={{ fontSize: 26 }}>Por partida</h2>
               <span className="tiny muted" style={{ display: "flex", gap: 14 }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span className="up" style={{ width: 12, height: 12, borderRadius: 3 }} />sube en términos reales</span>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span className="down" style={{ width: 12, height: 12, borderRadius: 3 }} />baja</span>
               </span>
             </div>
             <div className="treemap" role="list" aria-label="Partidas por monto">
-              {rects.map((r) => {
+              {rects.map((r, i) => {
                 const p = bySlug.get(r.key)!;
                 const big = r.w * r.h > 120;
                 const tiny = r.w < 5 || r.h < 7;
@@ -105,7 +105,7 @@ export function BudgetExplorer({ partidas, totalMiles, population }: { partidas:
                     role="listitem"
                     type="button"
                     className={`tm-tile ${tone(p.varPct)}${sel === p.slug ? " sel" : ""}`}
-                    style={{ left: `calc(${r.x}% + 2px)`, top: `calc(${r.y}% + 2px)`, width: `calc(${r.w}% - 4px)`, height: `calc(${r.h}% - 4px)`, padding: tiny ? 0 : undefined }}
+                    style={{ left: `calc(${r.x}% + 2px)`, top: `calc(${r.y}% + 2px)`, width: `calc(${r.w}% - 4px)`, height: `calc(${r.h}% - 4px)`, padding: tiny ? 0 : undefined, animationDelay: `${i * 0.025}s` }}
                     onClick={() => setSel(p.slug)}
                     aria-pressed={sel === p.slug}
                     aria-label={`${p.name}: ${fmtBillones(p.miles)}, ${fmtPct(p.varPct, true)} real`}
@@ -193,7 +193,7 @@ export function BudgetExplorer({ partidas, totalMiles, population }: { partidas:
                         top: 0,
                         height: 10,
                         borderRadius: 3,
-                        background: p.varPct >= 0 ? "var(--blue)" : "var(--copper)",
+                        background: p.varPct >= 0 ? "var(--blue)" : "var(--copper-fill)",
                         left: p.varPct >= 0 ? "50%" : `${50 - (Math.abs(p.varPct) / maxAbs) * 50}%`,
                         width: `${(Math.abs(p.varPct) / maxAbs) * 50}%`,
                       }}
@@ -205,12 +205,12 @@ export function BudgetExplorer({ partidas, totalMiles, population }: { partidas:
             </div>
           </div>
 
-          <div className="card" style={{ flex: "1 1 380px", minWidth: 0, background: "var(--ink)", color: "#fff" }}>
+          <div className="card" style={{ flex: "1 1 380px", minWidth: 0, background: "var(--night)", color: "#fff" }}>
             <div>
               <h2 style={{ fontSize: 26 }}>Tu propia boleta</h2>
-              <p className="small" style={{ color: "#C9D0DA" }}>Escribe cuánto pagas al mes en impuestos y te mostramos cómo se reparte entre las partidas.</p>
+              <p className="small" style={{ color: "#C9CAD3" }}>Escribe cuánto pagas al mes en impuestos y te mostramos cómo se reparte entre las partidas.</p>
             </div>
-            <label htmlFor="tax" className="small" style={{ color: "#C9D0DA" }}>Pago mensual en pesos</label>
+            <label htmlFor="tax" className="small" style={{ color: "#C9CAD3" }}>Pago mensual en pesos</label>
             <input
               id="tax"
               type="number"
@@ -219,7 +219,7 @@ export function BudgetExplorer({ partidas, totalMiles, population }: { partidas:
               step={1000}
               value={tax}
               onChange={(e) => setTax(Math.max(0, Number(e.target.value) || 0))}
-              style={{ minHeight: 56, borderRadius: 12, border: "1.5px solid var(--muted)", background: "#263040", color: "#fff", padding: "0 16px", fontFamily: "var(--font-display)", fontSize: 26, fontWeight: 700 }}
+              style={{ minHeight: 56, borderRadius: 16, border: "1.5px solid #4A4A57", background: "#2A2A35", color: "#fff", padding: "0 16px", fontFamily: "var(--font-display)", fontSize: 26, fontWeight: 700 }}
             />
             <div style={{ display: "flex", flexDirection: "column", fontFamily: "var(--font-mono)", fontSize: 14 }}>
               {[...partidas]
@@ -233,7 +233,7 @@ export function BudgetExplorer({ partidas, totalMiles, population }: { partidas:
                   </div>
                 ))}
             </div>
-            <p className="tiny" style={{ color: "#9AA4B2" }}>Reparto proporcional al gasto de las 32 partidas. Los impuestos no se asignan a gastos específicos: es una forma de dimensionar.</p>
+            <p className="tiny" style={{ color: "#A9AAB6" }}>Reparto proporcional al gasto de las 32 partidas. Los impuestos no se asignan a gastos específicos: es una forma de dimensionar.</p>
           </div>
         </section>
       </main>

@@ -2,6 +2,8 @@
 
 Cómo gasta Chile su presupuesto, cómo votan sus parlamentarios frente a lo que prometieron, y qué conexiones hay entre ambos. Next.js 16 (App Router) + TypeScript.
 
+Diseño editorial: titulares en Playfair Display, texto y cifras en Public Sans, tarjetas blancas sobre gris frío, un acento coral y alzas/recortes en índigo/coral (distintos también en luminosidad). Las animaciones son solo CSS y se apagan con «reducir movimiento».
+
 **Regla central: ninguna cifra se publica sin fuente y sin pasar sus comprobaciones.** Si una falla, `npm run build` falla.
 
 ## Empezar
@@ -41,7 +43,7 @@ Datos abiertos publicados con el sitio: `/datos/facts.json`, `/datos/verificatio
 | --- | --- | --- |
 | `/` | Boleta diaria por persona, tramitación del Presupuesto 2027 | Reales y verificados |
 | `/presupuesto` | Treemap de las 32 partidas del Proyecto 2027, alzas y bajas, calculadora de impuestos | Reales (corroborados, con controles contra DIPRES) |
-| `/promesas` | Promesas vs votos por parlamentario | Ejemplo, hasta correr los conectores de Cámara y promesas |
+| `/promesas` | Composición de la Cámara, votaciones cuadradas, programas presidenciales del Servel y ficha por parlamentario | Cámara y Servel reales; la ficha es de ejemplo hasta confirmar promesa–voto |
 | `/hallazgos` | Preguntas respondidas por IA, hallazgos por reglas y hallazgos propuestos por IA | Reales; los cruces de lobby y aportes son de ejemplo |
 | `/fuentes` | Registro público de cada dato, sus fuentes, comprobaciones y estado de la última captura | — |
 | `/datos/facts.json` | Todos los datos publicados en JSON, con procedencia | — |
@@ -84,7 +86,7 @@ Cada conector (`lib/connectors/`) descarga **solo** de dominios oficiales, guard
 | Conector | Fuente | Qué hace |
 | --- | --- | --- |
 | `dipres-ifp` | DIPRES, Informe de Finanzas Públicas (PDF) | Re-lee las 32 partidas y el total del Gobierno Central del PDF oficial. Si coinciden con lo corroborado, los sube a **oficial** con página y hash |
-| `camara` | opendata.camara.cl (XML) | Diputados en ejercicio (debe dar 155), votaciones del año y votos individuales; cada votación debe cuadrar con sus totales oficiales |
+| `camara` | opendata.camara.cl (XML) | Diputados en ejercicio (debe dar 155), composición por partido y sexo, votaciones del año y votos individuales; cada votación debe cuadrar con sus totales oficiales (las que no, quedan en cuarentena) |
 | `bcch` | Banco Central, API BDE | IPC mensual para pesos reales. Requiere `BCCH_TOKEN` (o `BCCH_USER`/`BCCH_PASS`) |
 | `mercadopublico` | ChileCompra API | Órdenes de compra diarias. Requiere `MERCADOPUBLICO_TICKET` |
 
@@ -93,6 +95,8 @@ Las credenciales nunca quedan en snapshots ni fuentes (`redactUrl`).
 **Primera ingesta de la Cámara:** los nombres de parámetros (`prmAnno`, `prmVotacionId`) siguen la documentación publicada; confírmalos en la primera corrida. Si cambian, se ajustan en `CAMARA_ENDPOINTS` o con `CAMARA_WS_BASE`.
 
 ## Promesas de campaña
+
+Los 8 programas presidenciales 2025 inscritos en el Servel están en `data/seed/programas-2025.json`. `npm run extract-programs` los procesa todos (en el workflow, activar con la variable `EXTRACT_PROMISES=true`; requiere `ANTHROPIC_API_KEY`).
 
 ```bash
 npm run extract-promises -- --url <pdf del programa> --publisher servel --author "Nombre" --slug nombre

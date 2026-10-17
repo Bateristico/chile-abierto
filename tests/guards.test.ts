@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { checkGrounding, numbersIn } from "@/lib/agents/grounding";
 import { checkQuote } from "@/lib/promises/validate";
 import { squarify } from "@/lib/budget/treemap";
-import { reconcileVotes, parseXml, findArray, parseOpcion } from "@/lib/connectors/camara";
+import { reconcileVotes, parseXml, findArray, parseOpcion, parseDeputies } from "@/lib/connectors/camara";
 import { redactUrl } from "@/lib/connectors/http";
 import { findPartidaRow } from "@/lib/connectors/dipres-ifp";
 import { pickCpiSeries } from "@/lib/connectors/bcch";
@@ -87,6 +87,23 @@ describe("connectors", () => {
     // "No Vota" must not be counted as a "No": that was the bug in the first live run.
     expect(reconcileVotes(v, votes)).toBeNull();
     expect(reconcileVotes({ ...v, TotalNo: 2 }, votes)).toMatch(/no cuadran/);
+  });
+
+  it("collects every deputy from DiputadoPeriodo wrappers with their current party", () => {
+    // Shape as returned by retornarDiputadosPeriodoActual on 17 Oct 2026 (each Diputado wrapped in a DiputadoPeriodo).
+    const dp = (id: number, sexo: string, parties: [string, string, string | null][]) => `<DiputadoPeriodo><FechaInicio>2026-03-11T00:00:00</FechaInicio><FechaTermino xsi:nil="true" />
+<Diputado><Id>${id}</Id><Nombre>N${id}</Nombre><Nombre2 /><ApellidoPaterno>P</ApellidoPaterno><ApellidoMaterno>M</ApellidoMaterno><Sexo Valor="0">${sexo}</Sexo><Militancias>
+${parties.map(([a, n, end]) => `<Militancia><FechaInicio>2019-01-01T00:00:00</FechaInicio>${end ? `<FechaTermino>${end}</FechaTermino>` : `<FechaTermino xsi:nil="true" />`}<Partido><Id>${a}</Id><Nombre>${n}</Nombre><Alias>${a}</Alias></Partido></Militancia>`).join("")}
+</Militancias></Diputado></DiputadoPeriodo>`;
+    const xml = `<?xml version="1.0" encoding="utf-8"?><DiputadosPeriodoColeccion xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://opendata.camara.cl/camaradiputados/v1">
+${dp(1, "Femenino", [["IND", "Independientes", "2019-09-26T23:59:59"], ["FA", "Frente Amplio", null]])}
+${dp(2, "Masculino", [["UDI", "Unión Demócrata Independiente", null]])}
+${dp(3, "Masculino", [["UDI", "Unión Demócrata Independiente", null]])}
+</DiputadosPeriodoColeccion>`;
+    const ds = parseDeputies(xml);
+    expect(ds).toHaveLength(3);
+    expect(ds[0].partido.alias).toBe("FA");
+    expect(ds.filter((d) => d.sexo === "Femenino")).toHaveLength(1);
   });
 
   it("parses Cámara-style XML with namespaces and attributes", () => {
