@@ -7,7 +7,7 @@ import { checkGrounding } from "./grounding";
 
 export const AiInsight = z.object({
   id: z.string().regex(/^[a-z0-9-]+$/),
-  cross: z.string().min(3).max(60),
+  cross: z.string().min(3).max(100),
   title: z.string().min(20).max(240),
   summary: z.string().min(20).max(600),
   factIds: z.array(z.string()).min(2).max(12),
@@ -39,7 +39,7 @@ export function validateInsight(raw: unknown, facts: Fact[]): { ok: true; insigh
   if (missing.length) return { ok: false, reason: `Cita datos inexistentes o no verificados: ${missing.join(", ")}` };
   const cited = ins.factIds.map((id) => byId.get(id)!);
   const g = checkGrounding(`${ins.title} ${ins.summary}`, cited);
-  if (!g.grounded) return { ok: false, reason: `Cifras que no están en los datos citados: ${g.unsupported.join(", ")}` };
+  if (!g.grounded) return { ok: false, reason: [g.unsupported.length ? `Cifras que no están en los datos citados ni se derivan de ellos: ${g.unsupported.join(", ")}` : "", g.unsupportedDates?.length ? `Fechas que no están en los datos citados: ${g.unsupportedDates.join(", ")}` : ""].filter(Boolean).join(". ") };
   return { ok: true, insight: ins };
 }
 

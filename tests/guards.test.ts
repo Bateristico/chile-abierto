@@ -28,6 +28,20 @@ describe("agent grounding", () => {
     expect(g.grounded).toBe(false);
     expect(g.unsupported).toContain(12.4);
   });
+
+  it("accepts simple arithmetic on cited facts, recomputed by the gate", () => {
+    const debt = facts.filter((f) => ["deuda.limite_inicial_2026", "deuda.ampliacion_2026"].includes(f.id));
+    expect(checkGrounding("El límite quedó en US$23.600 millones.", debt).grounded).toBe(true);
+    expect(checkGrounding("El límite quedó en US$24.100 millones.", debt).grounded).toBe(false);
+  });
+
+  it("accepts a date only if a cited fact carries it", () => {
+    const plazo = facts.filter((f) => f.id === "tramite.plazo_fecha");
+    expect(checkGrounding("El plazo vence el 29 de noviembre.", plazo).grounded).toBe(true);
+    const g = checkGrounding("El plazo vence el 3 de diciembre.", plazo);
+    expect(g.grounded).toBe(false);
+    expect(g.unsupportedDates).toContain("12-03");
+  });
 });
 
 describe("promise quotes", () => {

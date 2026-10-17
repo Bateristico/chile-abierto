@@ -116,15 +116,15 @@ export async function ask(question: string): Promise<AskResult> {
   const warnings: string[] = [];
   let g = checkGrounding(answer, [...retrieved.values()]);
   if (!g.grounded) {
-    steps.push({ agent: "Verificador", did: `Encontró cifras sin respaldo (${g.unsupported.join(", ")}) y pidió corregir.` });
+    steps.push({ agent: "Verificador", did: `Encontró cifras o fechas sin respaldo (${[...g.unsupported, ...(g.unsupportedDates ?? [])].join(", ")}) y pidió corregir.` });
     messages.push({
       role: "user",
-      content: `Estas cifras de tu respuesta no están en los datos entregados: ${g.unsupported.join(", ")}. Reescribe la respuesta usando solo cifras de las herramientas, con sus ids.`,
+      content: `Estas cifras o fechas de tu respuesta no están en los datos entregados: ${[...g.unsupported, ...(g.unsupportedDates ?? [])].join(", ")}. Reescribe la respuesta usando solo cifras de las herramientas, con sus ids.`,
     });
     const fix = await client.messages.create({ model, max_tokens: 1000, system: SYSTEM, messages });
     answer = fix.content.filter((b): b is Anthropic.TextBlock => b.type === "text").map((b) => b.text).join("\n").trim();
     g = checkGrounding(answer, [...retrieved.values()]);
-    if (!g.grounded) warnings.push(`Cifras sin respaldo verificado: ${g.unsupported.join(", ")}. Trátalas con cautela.`);
+    if (!g.grounded) warnings.push(`Cifras o fechas sin respaldo verificado: ${[...g.unsupported, ...(g.unsupportedDates ?? [])].join(", ")}. Trátalas con cautela.`);
   } else {
     steps.push({ agent: "Verificador", did: "Comprobó que cada cifra de la respuesta viene de un dato verificado." });
   }
