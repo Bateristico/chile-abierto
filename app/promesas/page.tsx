@@ -6,7 +6,8 @@ import { PromiseExplorer, type PromiseData } from "@/components/PromiseExplorer"
 import { Hemicycle } from "@/components/Hemicycle";
 import { Prov } from "@/components/Prov";
 import { dataMode } from "@/lib/facts";
-import { camaraComposition, programas } from "@/lib/camara-view";
+import { camaraComposition, programas, fichas } from "@/lib/camara-view";
+import { FichaReal } from "@/components/FichaReal";
 import { toProv, type ProvInfo } from "@/lib/provenance/view";
 import { fmtDate, fmtNumber } from "@/lib/format";
 
@@ -35,6 +36,7 @@ export default function Promesas() {
   const camara = camaraComposition();
   const progs = programas();
   const extracted = progs.items.filter((p) => p.extracted);
+  const reales = fichas();
 
   return (
     <>
@@ -134,14 +136,16 @@ export default function Promesas() {
           </div>
         </section>
 
-        {!live && demo && (
+        {!reales.length && !live && demo && (
           <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}>
             <span className="kicker">Así se verá cada parlamentario</span>
             <h2 className="sec-title">Ficha de ejemplo</h2>
           </div>
         )}
       </main>
-      {!live && demo ? (
+      {reales.length ? (
+        reales.map((f) => <FichaReal key={f.slug} f={f} />)
+      ) : !live && demo ? (
         <PromiseExplorer data={demo} demoProv={DEMO_PROV} />
       ) : (
         <main className="wrap">

@@ -20,7 +20,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     env:
       DATA_MODE: demo
       NEXT_TELEMETRY_DISABLED: "1"
@@ -33,6 +33,13 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      # Past roll-call votes never change: keep them between runs so the daily capture only downloads what's new.
+      - uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: fuentes-cache-${{ github.run_id }}
+          restore-keys: fuentes-cache-
 
       # 1. Snapshot from official sources. A failing connector publishes nothing and the site keeps the verified seed data;
       #    its problems are shown on /fuentes. Credentials are optional: connectors without them are skipped.

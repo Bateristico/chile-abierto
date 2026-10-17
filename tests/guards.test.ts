@@ -6,6 +6,7 @@ import { reconcileVotes, parseXml, findArray, parseOpcion, parseDeputies } from 
 import { redactUrl } from "@/lib/connectors/http";
 import { findPartidaRow } from "@/lib/connectors/dipres-ifp";
 import { pickCpiSeries } from "@/lib/connectors/bcch";
+import { partyAt, majority, loadFichaConfigs } from "@/lib/connectors/fichas";
 import { loadFacts } from "@/lib/facts";
 
 describe("agent grounding", () => {
@@ -117,6 +118,30 @@ ${dp(3, "Masculino", [["UDI", "Unión Demócrata Independiente", null]])}
     const pages = [{ num: 88, text: "Ministerio de Salud 18.314.764.816 4,7\nMinisterio de Minería 56.085.118 -0,4" }];
     expect(findPartidaRow(pages, "Ministerio de Salud")).toEqual([{ page: 88, milesCLP: 18314764816, varPct: 4.7 }]);
     expect(findPartidaRow(pages, "Ministerio de Energía")).toEqual([]);
+  });
+});
+
+describe("fichas", () => {
+  it("knows a deputy's party on each date from the Cámara's militancias", () => {
+    const ms = [
+      { desde: "2022-03-11", hasta: "2024-07-02", alias: "IND" },
+      { desde: "2024-07-03", hasta: "2026-03-10", alias: "FA" },
+    ];
+    expect(partyAt(ms, "2023-04-11")).toBe("IND");
+    expect(partyAt(ms, "2025-01-29")).toBe("FA");
+    expect(partyAt(ms, "2026-05-01")).toBeNull();
+  });
+
+  it("takes the party majority only when it is clear", () => {
+    expect(majority([1, 1, 1, 0])).toBe(1);
+    expect(majority([1, 0])).toBeNull();
+    expect(majority([4, 4])).toBeNull();
+  });
+
+  it("has well-formed fichas whose quotes are long enough to verify", () => {
+    const cfgs = loadFichaConfigs();
+    expect(cfgs.length).toBeGreaterThan(0);
+    for (const c of cfgs) for (const p of c.promesas) expect(p.cita.split(" ").length).toBeGreaterThanOrEqual(4);
   });
 });
 

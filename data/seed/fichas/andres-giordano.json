@@ -1,0 +1,84 @@
+{
+  "slug": "andres-giordano",
+  "diputadoId": 1129,
+  "periodoId": 10,
+  "inicio": "2022-03-11",
+  "fin": "2026-03-10",
+  "perfil": {
+    "nombre": "Andrés Giordano Salazar",
+    "cargo": "Diputado por el Distrito 9 (Región Metropolitana), periodo 2022–2026",
+    "distrito": "Distrito 9: Cerro Navia, Conchalí, Huechuraba, Independencia, Lo Prado, Quinta Normal, Recoleta y Renca",
+    "trayectoria": "Dirigente sindical (presidente del sindicato de trabajadores de Starbucks) y músico. Electo en 2021 como independiente en el cupo de Revolución Democrática, dentro de Apruebo Dignidad; militante del Frente Amplio desde julio de 2024. Presidió la Comisión de Trabajo y Seguridad Social.",
+    "reeleccion": "Postuló a la reelección el 16 de noviembre de 2025 por el Frente Amplio (pacto Unidad por Chile) y no resultó electo: 21.188 votos (4,15%).",
+    "fuente": {
+      "publisher": "bcn",
+      "title": "Reseña parlamentaria · Andrés Giordano Salazar",
+      "url": "https://www.bcn.cl/historiapolitica/resenas_parlamentarias/wiki/Andr%C3%A9s_Giordano_Salazar",
+      "retrievedAt": "2026-10-17"
+    },
+    "camara": "https://www.camara.cl/diputados/detalle/mociones.aspx?prmID=1129"
+  },
+  "programa": {
+    "titulo": "Manifiesto programático de Gabriel Boric (Apruebo Dignidad), presidencial 2021",
+    "nota": "Programa de la coalición con la que fue electo, no un programa personal: los diputados no inscriben programa en el Servel. El Servel lo publica como programa de la candidatura presidencial 2021.",
+    "publisher": "servel",
+    "url": "https://www.servel.cl/wp-content/uploads/2023/04/GABRIEL-BORIC.pdf",
+    "listado": "https://www.servel.cl/biblioteca-de-documentos/procesos-electorales/convencionales-constituyentes-municipales-y-gobernadores-regionales-2021/respaldo-minisitio-elecciones-2021/documentos-gastos-electoral-presidenciales-2021/"
+  },
+  "promesas": [
+    {
+      "id": "40-horas",
+      "tema": "Trabajo",
+      "cita": "promulgando la reducción de la jornada de trabajo a 40 horas semanales",
+      "pagina": 26,
+      "boletin": "11179-13",
+      "relacion": "implementa",
+      "nota": "La ley de 40 horas reduce la jornada laboral; en este periodo la Cámara votó las enmiendas del Senado (tercer trámite)."
+    },
+    {
+      "id": "pensiones-solidarias",
+      "tema": "Pensiones",
+      "cita": "Es urgente el aumento de las actuales pensiones a través de solidaridad intergeneracional",
+      "pagina": 21,
+      "boletin": "15480-13",
+      "relacion": "parcial",
+      "nota": "La reforma de pensiones de 2025 sube la PGU y crea un seguro social con aporte del empleador, con un componente solidario."
+    },
+    {
+      "id": "sin-afp",
+      "tema": "Pensiones",
+      "cita": "Un nuevo sistema de previsión social: sin AFP y solidario",
+      "pagina": 21,
+      "boletin": "15480-13",
+      "relacion": "tension",
+      "nota": "La misma reforma mantiene a las AFP como administradoras de las cuentas individuales."
+    },
+    {
+      "id": "justicia-tributaria",
+      "tema": "Impuestos",
+      "cita": "Nuestra política fiscal tendrá énfasis en la responsabilidad fiscal y la justicia tributaria, con el objetivo de financiar las políticas públicas necesarias para Chile.",
+      "pagina": 36,
+      "boletin": "15170-05",
+      "relacion": "implementa",
+      "nota": "Es la reforma tributaria del Gobierno; la Cámara rechazó la idea de legislar en marzo de 2023."
+    },
+    {
+      "id": "fiscalizacion-sii",
+      "tema": "Impuestos",
+      "cita": "se fortalecerán las facultades de fiscalización del SII",
+      "pagina": 36,
+      "boletin": "16621-05",
+      "relacion": "implementa",
+      "nota": "La ley de cumplimiento tributario de 2024 amplía las herramientas del SII contra la evasión y la elusión."
+    },
+    {
+      "id": "sala-cuna",
+      "tema": "Cuidados",
+      "cita": "derecho a sala cuna y jardín y otros derechos sin distinciones por género",
+      "pagina": 26,
+      "boletin": "14782-13",
+      "relacion": "implementa",
+      "nota": "Proyecto de sala cuna universal: equipara el derecho para trabajadoras, trabajadores e independientes."
+    }
+  ]
+}

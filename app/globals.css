@@ -323,3 +323,5 @@ footer.site { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: sp
 /* SVG pieces animate from their own box. */
 svg .grow, svg .growY, svg .growR { transform-box: fill-box; }
 .display em, .sec-title em, .hero-card h1 em { font-style: italic; }
+
+.ring { animation: rise 1s var(--ease) both; }

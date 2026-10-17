@@ -50,3 +50,34 @@ export function programas(): { eleccion: string; retrievedAt: string; items: Pro
   });
   return { eleccion: raw.eleccion, retrievedAt: raw.retrievedAt, items };
 }
+
+export interface FichaRecord {
+  slug: string;
+  perfil: { nombre: string; cargo: string; distrito: string; trayectoria: string; reeleccion?: string; fuente: { publisher: string; title: string; url: string; retrievedAt: string }; camara: string };
+  militancias: { desde: string; hasta: string; alias: string }[];
+  programa: { titulo: string; nota: string; url: string; listado?: string; sha256: string; retrievedAt: string; paginas: number };
+  periodo: { inicio: string; fin: string; votaciones: number };
+  porAnno: { anno: number; total: number; aFavor: number; enContra: number; abstencion: number; noVota: number }[];
+  promesas: {
+    id: string;
+    tema: string;
+    cita: string;
+    pagina: number;
+    relacion: "implementa" | "parcial" | "tension";
+    nota: string;
+    proyecto: { boletin: string; nombre: string; url: string; votacionesEnPeriodo: number };
+    votos: { id: number; fecha: string; tipo: string; articulo: string; opcion: string }[];
+    tally: Record<string, number>;
+    dominante: string | null;
+  }[];
+  disidencias: { id: number; fecha: string; descripcion: string; opcion: string; partido: string | null; mayoriaPartido: string }[];
+  cuarentena: number[];
+  rechazadas: { id: string; motivo: string }[];
+}
+
+/** Real legislator fichas published by the «fichas» connector. Empty until it has run. */
+export function fichas(): FichaRecord[] {
+  const file = path.join(process.cwd(), "data", "store", "fichas.records.json");
+  if (!fs.existsSync(/*turbopackIgnore: true*/ file)) return [];
+  return (JSON.parse(fs.readFileSync(/*turbopackIgnore: true*/ file, "utf8")) as { fichas: FichaRecord[] }).fichas;
+}
