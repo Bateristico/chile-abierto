@@ -65,6 +65,7 @@ describe("budget votes", () => {
     expect(partidaOf("Enmienda del Senado que reemplaza íntegramente la Partida 32 Ministerio de Seguridad")).toBe(32);
     expect(partidaOf("En votación la indicación N° 1 de la Partida N° 01 PRESIDENCIA")).toBe(1);
     expect(partidaOf("Para agregar un nuevo artículo")).toBeNull();
+    expect(partidaOf("Partida 00 Indicación 84 - En votación la reclamación contra la declaración de inadmisibilidad")).toBe(0);
     expect(proponente("del Ejecutivo Part 16")).toBe("Ejecutivo");
     expect(proponente("de la diputada Rojas Camila  Part 29")).toBe("Rojas Camila");
   });

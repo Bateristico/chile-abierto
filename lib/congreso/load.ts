@@ -29,3 +29,14 @@ export function clientPeriod(data: CongresoData, p: Periodo) {
   };
 }
 export type ClientPeriod = ReturnType<typeof clientPeriod>;
+
+import { analyse, type Analysis } from "./analysis";
+const analyses = new Map<number, Analysis>();
+/** Analysis of one period, computed once per build. */
+export function analysisFor(periodId: number): Analysis | null {
+  const data = congresoData();
+  const p = data?.periodos.find((x) => x.id === periodId);
+  if (!p) return null;
+  if (!analyses.has(periodId)) analyses.set(periodId, analyse(p));
+  return analyses.get(periodId)!;
+}

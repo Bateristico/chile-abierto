@@ -5,7 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { loadFacts } from "../lib/facts";
-import { congresoData, clientPeriod } from "../lib/congreso/load";
+import { congresoData, clientPeriod, analysisFor } from "../lib/congreso/load";
 
 const out = path.join(process.cwd(), "public", "datos");
 fs.mkdirSync(out, { recursive: true });
@@ -22,7 +22,10 @@ for (const name of ["verification-report.json", "snapshot.json", "ai-snapshot.js
 const congreso = congresoData();
 if (congreso) {
   fs.mkdirSync(path.join(out, "congreso"), { recursive: true });
-  for (const p of congreso.periodos) fs.writeFileSync(path.join(out, "congreso", `p${p.id}.json`), JSON.stringify(clientPeriod(congreso, p)));
+  for (const p of congreso.periodos) {
+    fs.writeFileSync(path.join(out, "congreso", `p${p.id}.json`), JSON.stringify(clientPeriod(congreso, p)));
+    fs.writeFileSync(path.join(out, "congreso", `p${p.id}-analisis.json`), JSON.stringify(analysisFor(p.id)));
+  }
   console.log(`Congreso: ${congreso.periodos.map((p) => `${p.nombre} ${p.votaciones.length} votaciones`).join(" · ")}`);
 }
 console.log(`Datos abiertos exportados: ${facts.length} datos → public/datos/`);

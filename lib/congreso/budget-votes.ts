@@ -3,6 +3,7 @@ import type { CongresoData, Periodo, Votacion } from "./types";
 
 /** Partidas of the Ley de Presupuestos by number, as the Cámara's indicaciones cite them («Part 16 - Cap 01…»). */
 export const PARTIDAS: Record<number, string> = {
+  0: "Reclamos por indicaciones declaradas inadmisibles",
   1: "Presidencia", 2: "Congreso", 3: "Poder Judicial", 4: "Contraloría", 5: "Interior", 6: "Relaciones Exteriores", 7: "Economía",
   8: "Hacienda", 9: "Educación", 10: "Justicia", 11: "Defensa", 12: "Obras Públicas", 13: "Agricultura", 14: "Bienes Nacionales",
   15: "Trabajo", 16: "Salud", 17: "Minería", 18: "Vivienda", 19: "Transportes", 20: "Segegob", 21: "Desarrollo Social", 22: "Segpres",

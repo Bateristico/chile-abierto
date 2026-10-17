@@ -19,7 +19,7 @@ export function BudgetVoteGrid({ data, compact = false }: { data: CongresoData; 
   const g = g27 ?? budgetGrid(data, "17870-05", 2026);
   if (!g) return null;
   const pid = data.periodos.find((p) => p.nombre === g.periodo)?.id;
-  const filas = compact ? g.filas.filter((f) => f.partida !== null).slice(0, 12) : g.filas;
+  const filas = compact ? g.filas.filter((f) => f.partida).slice(0, 12) : g.filas;
   const proposers = new Map<string, number>();
   for (const f of g.filas) for (const v of f.votos) {
     const p = proponente(v.art);
@@ -49,7 +49,7 @@ export function BudgetVoteGrid({ data, compact = false }: { data: CongresoData; 
           <tbody>
             {filas.map((f) => (
               <tr key={f.key}>
-                <th scope="row" className="rowh">{f.partida !== null ? `${String(f.partida).padStart(2, "0")} · ` : ""}{f.nombre}</th>
+                <th scope="row" className="rowh">{f.partida ? `${String(f.partida).padStart(2, "0")} · ` : ""}{f.nombre}</th>
                 <td className="tiny muted" style={{ textAlign: "center" }}>{f.votos.length}</td>
                 {g.partidos.map((p) => {
                   const s = support(f.porPartido[p]);
