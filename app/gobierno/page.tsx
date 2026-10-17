@@ -53,6 +53,11 @@ export default function Gobierno() {
 
         {a ? (
           <>
+            {!!data?.sinLeer && (
+              <p className="card lilac small" role="status" style={{ padding: 18 }}>
+                Serie en construcción: faltan {fmtNumber(data.sinLeer)} proyectos por leer del Senado; los del Gobierno actual, por ser recientes, se leen primero.
+              </p>
+            )}
             <section className="kpis" aria-label="Resumen">
               <div className="kpi rise d1"><span className="lbl">Proyectos enviados al Congreso</span><span className="bignum">{fmtNumber(a.total)}</span>{fM && <span><Prov info={toProv(fM)} /></span>}</div>
               <div className="kpi rise d2"><span className="lbl">Ya publicados como ley</span><span className="bignum">{fmtNumber(a.ley)}</span><span className="tiny muted">{pct(a.ley, a.total)}% de lo enviado</span>{fL && <span><Prov info={toProv(fL)} /></span>}</div>

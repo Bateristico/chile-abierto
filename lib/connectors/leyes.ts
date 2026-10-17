@@ -233,10 +233,19 @@ export const leyes: Connector = {
       const lastVote = voted.get(b);
       return !!lastVote && lastVote >= e.fetchedAt.slice(0, 10) && !(e.bill && TERMINAL.includes(e.bill.st));
     });
-    const todo = due.slice(0, max);
+    // Time budget: a run fetches what it can and saves it; the rest waits for the next run (the cache only persists
+    // when the job finishes, so a run that hits the job's time limit would lose everything).
+    const deadline = Date.now() + Number(process.env.LEYES_MINUTOS ?? 20) * 60_000;
+    // Newest first: recent bills matter most and change most.
+    const todo = due.sort((x, y) => (listed.get(y)?.ingreso ?? "").localeCompare(listed.get(x)?.ingreso ?? "")).slice(0, max);
     let failed = 0;
     let missing = 0;
-    await pool(todo, Number(process.env.LEYES_CONCURRENCY ?? 6), async (b) => {
+    let skipped = 0;
+    await pool(todo, Number(process.env.LEYES_CONCURRENCY ?? 8), async (b) => {
+      if (Date.now() > deadline) {
+        skipped++;
+        return;
+      }
       try {
         const snap = await fetchSnapshot(URLS.tramitacion(b), "senado", {}, 3, false);
         let bill = parseSenadoBill(snap.body);
@@ -251,7 +260,8 @@ export const leyes: Connector = {
     // Authors: once per Moción
     const needAuthors = universe.filter((b) => state[b] && !state[b].autores && (listed.get(b)?.iniciativa ?? state[b].bill?.iniciativa ?? "").startsWith("Moci"));
     let authorFails = 0;
-    await pool(needAuthors.slice(0, max), Number(process.env.LEYES_CONCURRENCY ?? 6), async (b) => {
+    await pool(needAuthors.slice(0, max), Number(process.env.LEYES_CONCURRENCY ?? 8), async (b) => {
+      if (Date.now() > deadline + 10 * 60_000) return;
       try {
         const snap = await fetchImmutable(URLS.proyecto(b), "camara");
         state[b].autores = parseCamaraAuthors(snap.body);
@@ -262,27 +272,34 @@ export const leyes: Connector = {
     fs.mkdirSync(path.dirname(STATE), { recursive: true });
     fs.writeFileSync(STATE, JSON.stringify(state));
 
-    // 3. Records
+    // 3. Records: only bills read at least once (a bill never read is not shown as "en tramitación" by default)
     const bills: Bill[] = [];
+    let sinLeer = 0;
     for (const b of universe) {
       const e = state[b];
       const l = listed.get(b);
-      if (e?.bill) bills.push({ ...e.bill, camaraId: l?.camaraId, autores: e.autores ?? [] });
+      if (!e) {
+        sinLeer++;
+        continue;
+      }
+      if (e.bill) bills.push({ ...e.bill, camaraId: l?.camaraId, autores: e.autores ?? [] });
       else if (l)
+        // Read, but the Senado has no record yet: a bill filed in the last days.
         bills.push({
           b, camaraId: l.camaraId, titulo: l.nombre, iniciativa: l.iniciativa, origen: l.origen, ingreso: l.ingreso, etapa: "Primer trámite constitucional", estado: "En tramitación", st: "tramite",
-          urgencias: [], etapas: [], materias: [], autores: e?.autores ?? [], autoresNombres: [], refundidos: [], movimientos: 0, señales: [],
+          urgencias: [], etapas: [], materias: [], autores: e.autores ?? [], autoresNombres: [], refundidos: [], movimientos: 0, señales: [],
         });
     }
     bills.sort((a, c) => c.ingreso.localeCompare(a.ingreso));
-    const pending = due.length - todo.length;
-    notes.push(`${bills.length} proyectos (${listed.size} ingresados desde ${LEYES_DESDE}, ${voted.size} votados en Sala), ${todo.length} actualizados${pending ? `, ${pending} quedan para la próxima captura` : ""}`);
+    const pending = due.length - todo.length + skipped;
+    const withAuthors = universe.filter((b) => state[b]?.autores).length;
+    notes.push(`${bills.length} proyectos (${listed.size} ingresados desde ${LEYES_DESDE}, ${voted.size} votados en Sala), ${todo.length - skipped} actualizados${pending ? `, ${pending} quedan para la próxima captura` : ""}, ${withAuthors} con autores leídos`);
     if (missing) notes.push(`${missing} aún sin ficha en el Senado`);
-    if (failed > Math.max(20, todo.length * 0.1)) issues.push(`El servicio del Senado falló en ${failed} de ${todo.length} proyectos.`);
+    if (failed > Math.max(20, (todo.length - skipped) * 0.1)) issues.push(`El servicio del Senado falló en ${failed} de ${todo.length - skipped} proyectos.`);
     if (authorFails > Math.max(20, needAuthors.length * 0.1)) issues.push(`El servicio de la Cámara falló al leer autores en ${authorFails} proyectos.`);
 
-    // 4. Headline facts
-    if (lastList) {
+    // 4. Headline facts, only once every bill has been read (a partial count would be wrong, not just incomplete)
+    if (lastList && sinLeer === 0) {
       const src = (value: number): SourceRef => ({ publisher: "senado", title: "Senado · tramitación de proyectos (servicio público) y Cámara · listas de Mensajes y Mociones", url: `${SENADO}/tramitacion.php`, locator: "descripcion: estado, leynro, diariooficial", retrievedAt: lastList!.retrievedAt, sha256: lastList!.sha256, verifiedBy: "pipeline", asPrinted: String(value), reportedValue: value });
       const add = (id: string, label: string, definition: string, value: number, unit: "conteo" | "dias" = "conteo") =>
         facts.push({ id, label, definition, value, unit, asOf: today, domain: "congreso", sources: [src(value)] });
@@ -295,7 +312,8 @@ export const leyes: Connector = {
       if (d !== null) add("leyes.mediana_dias_a_ley", "Días que tarda un proyecto en ser ley (mediana)", "Mediana de días entre el ingreso y la publicación, leyes publicadas desde el 11-03-2022.", d, "dias");
     }
 
-    const data: LeyesData = { generadoEl: new Date().toISOString(), desde: LEYES_DESDE, bills };
+    if (sinLeer) notes.push(`${sinLeer} proyectos aún sin leer: se completan en las próximas capturas`);
+    const data: LeyesData = { generadoEl: new Date().toISOString(), desde: LEYES_DESDE, bills, sinLeer };
     return { connector: this.id, facts, records: { leyes: [data] }, issues, notes };
   },
 };

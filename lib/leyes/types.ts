@@ -58,6 +58,8 @@ export interface LeyesData {
   /** Bills filed since this date are in scope (plus older bills voted in the Cámara since then) */
   desde: string;
   bills: Bill[];
+  /** Bills in scope not read yet (the first captures fill the series over several days) */
+  sinLeer?: number;
 }
 
 export const SENADO_BILL_URL = (b: string) => `https://tramitacion.senado.cl/appsenado/templates/tramitacion/index.php?boletin_ini=${encodeURIComponent(b)}`;

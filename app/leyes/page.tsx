@@ -57,6 +57,12 @@ export default function Leyes() {
 
         {data ? (
           <>
+            {!!data.sinLeer && (
+              <p className="card lilac small" role="status" style={{ padding: 18 }}>
+                Serie en construcción: faltan {fmtNumber(data.sinLeer)} proyectos por leer del Senado. Cada captura diaria lee los que alcanza, empezando por los más recientes; las cifras de esta página
+                cubren los {fmtNumber(bills.length)} ya leídos.
+              </p>
+            )}
             <section className="kpis" aria-label="Resumen">
               <div className="kpi rise d1">
                 <span className="lbl">Leyes publicadas desde el 11 de marzo de 2022</span>
