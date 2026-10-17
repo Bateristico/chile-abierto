@@ -29,7 +29,7 @@ export const bcch: Connector = {
   description: "Banco Central · IPC mensual para convertir a pesos reales",
   requires: ["BCCH_USER", "BCCH_PASS"],
   async run({ year }): Promise<ConnectorResult> {
-    const series = process.env.BCCH_CPI_SERIES ?? "F074.IPC.IND.Z.EP23.C.M";
+    const series = process.env.BCCH_CPI_SERIES || "F074.IPC.IND.Z.EP23.C.M";
     const params = new URLSearchParams({
       user: process.env.BCCH_USER!,
       pass: process.env.BCCH_PASS!,

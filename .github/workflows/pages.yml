@@ -43,7 +43,7 @@ jobs:
           BCCH_USER: ${{ secrets.BCCH_USER }}
           BCCH_PASS: ${{ secrets.BCCH_PASS }}
           BCCH_CPI_SERIES: ${{ vars.BCCH_CPI_SERIES }}
-          CAMARA_MAX_DETAIL: ${{ vars.CAMARA_MAX_DETAIL || '200' }}
+          CAMARA_MAX_DETAIL: ${{ vars.CAMARA_MAX_DETAIL || '5000' }}
         run: npm run ingest
 
       # 2. AI layer over the verified snapshot: insights and pre-answered questions, kept only if every number checks out.

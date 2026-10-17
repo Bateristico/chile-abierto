@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { checkGrounding, numbersIn } from "@/lib/agents/grounding";
 import { checkQuote } from "@/lib/promises/validate";
 import { squarify } from "@/lib/budget/treemap";
-import { reconcileVotes, parseXml, findArray } from "@/lib/connectors/camara";
+import { reconcileVotes, parseXml, findArray, parseOpcion } from "@/lib/connectors/camara";
 import { redactUrl } from "@/lib/connectors/http";
 import { findPartidaRow } from "@/lib/connectors/dipres-ifp";
 import { loadFacts } from "@/lib/facts";
@@ -52,15 +52,27 @@ describe("connectors", () => {
     expect(redactUrl("https://si3.bcentral.cl/S.ashx?user=me&pass=secret&function=GetSeries")).not.toMatch(/secret|=me&/);
   });
 
-  it("reconciles individual votes with the published totals", () => {
-    const v = { Id: 1, Fecha: "2026-05-14", TotalSi: 2, TotalNo: 1, TotalAbstencion: 0, TotalDispensado: 0 };
-    const votes = [
-      { votacionId: 1, diputadoId: 10, opcion: "Afirmativo" },
-      { votacionId: 1, diputadoId: 11, opcion: "Afirmativo" },
-      { votacionId: 1, diputadoId: 12, opcion: "En Contra" },
-    ];
+  it("reconciles individual votes with the published totals, by official option code", () => {
+    // Shape and codes as returned by retornarVotacionDetalle on 17 Oct 2026 (votación 90328).
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<Votacion xmlns="http://opendata.camara.cl/camaradiputados/v1"><Id>90328</Id><Fecha>2026-10-07T13:18:43</Fecha>
+<TotalSi>2</TotalSi><TotalNo>1</TotalNo><TotalAbstencion>1</TotalAbstencion><TotalDispensado>0</TotalDispensado>
+<Votos>
+<Voto><Diputado><Id>803</Id><Nombre>René</Nombre></Diputado><OpcionVoto Valor="0">En Contra</OpcionVoto></Voto>
+<Voto><Diputado><Id>815</Id><Nombre>Sergio</Nombre></Diputado><OpcionVoto Valor="1">Afirmativo</OpcionVoto></Voto>
+<Voto><Diputado><Id>843</Id><Nombre>René Manuel</Nombre></Diputado><OpcionVoto Valor="1">Afirmativo</OpcionVoto></Voto>
+<Voto><Diputado><Id>872</Id><Nombre>Jaime</Nombre></Diputado><OpcionVoto Valor="2">Abstención</OpcionVoto></Voto>
+<Voto><Diputado><Id>900</Id><Nombre>X</Nombre></Diputado><OpcionVoto Valor="4">No Vota</OpcionVoto></Voto>
+</Votos></Votacion>`;
+    const v = { Id: 90328, Fecha: "2026-10-07T13:18:43", TotalSi: 2, TotalNo: 1, TotalAbstencion: 1, TotalDispensado: 0 };
+    const votes = findArray(parseXml(xml), "Voto").map((x) => {
+      const o = x as Record<string, unknown>;
+      return { votacionId: 90328, diputadoId: Number((o.Diputado as Record<string, unknown>).Id), ...parseOpcion(o.OpcionVoto) };
+    });
+    expect(votes).toHaveLength(5);
+    // "No Vota" must not be counted as a "No": that was the bug in the first live run.
     expect(reconcileVotes(v, votes)).toBeNull();
-    expect(reconcileVotes({ ...v, TotalSi: 3 }, votes)).toMatch(/no cuadran/);
+    expect(reconcileVotes({ ...v, TotalNo: 2 }, votes)).toMatch(/no cuadran/);
   });
 
   it("parses Cámara-style XML with namespaces and attributes", () => {
