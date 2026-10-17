@@ -6,6 +6,7 @@ import { fmtDate, fmtEditionDate } from "@/lib/format";
 const NAV = [
   { href: "/", label: "Portada" },
   { href: "/presupuesto", label: "Presupuesto" },
+  { href: "/votaciones", label: "Votaciones" },
   { href: "/promesas", label: "Promesas y votos" },
   { href: "/hallazgos", label: "Hallazgos" },
   { href: "/fuentes", label: "Fuentes" },

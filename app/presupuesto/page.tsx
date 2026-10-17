@@ -4,6 +4,8 @@ import { BudgetExplorer, type PartidaView } from "@/components/BudgetExplorer";
 import { getFact } from "@/lib/facts";
 import { partidas } from "@/lib/findings/rules";
 import { toProv } from "@/lib/provenance/view";
+import { BudgetVoteGrid } from "@/components/BudgetVoteGrid";
+import { congresoData } from "@/lib/congreso/load";
 
 export const metadata: Metadata = { title: "Presupuesto 2027" };
 
@@ -25,7 +27,8 @@ export default function Presupuesto() {
     <>
       <Header current="/presupuesto" />
       <BudgetExplorer partidas={views} totalMiles={total.value as number} population={pop.value as number} />
-      <div className="wrap" style={{ paddingTop: 0 }}>
+      <div className="wrap" style={{ paddingTop: 0 }} id="votacion">
+        {congresoData() && <BudgetVoteGrid data={congresoData()!} />}
         <Footer />
       </div>
     </>

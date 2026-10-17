@@ -73,9 +73,10 @@ const CACHE = path.join(process.cwd(), "data", "cache");
  * kept gzip-compressed under data/cache with its original retrieval time and sha256, and reused on later runs
  * (the workflow persists data/cache between runs). Provenance stays the original download.
  */
-export async function fetchImmutable(url: string, publisherId: string): Promise<Snapshot> {
+export async function fetchImmutable(url: string, publisherId: string, version = ""): Promise<Snapshot> {
   const { gzipSync, gunzipSync } = await import("node:zlib");
-  const key = sha256(Buffer.from(url));
+  // `version` lets a document that grows (a bill's vote list) be re-downloaded when something new is known about it.
+  const key = sha256(Buffer.from(version ? `${url}#${version}` : url));
   const dir = path.join(CACHE, publisherId);
   const meta = path.join(dir, `${key}.json`);
   const blob = path.join(dir, `${key}.gz`);

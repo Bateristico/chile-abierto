@@ -10,6 +10,8 @@ import { partidas, allFindings } from "@/lib/findings/rules";
 import { camaraComposition, programas } from "@/lib/camara-view";
 import { fmtClp, fmtDate, fmtPct, fmtNumber } from "@/lib/format";
 import { href } from "@/lib/base";
+import { BudgetVoteGrid } from "@/components/BudgetVoteGrid";
+import { congresoData } from "@/lib/congreso/load";
 
 const ORIGIN = { regla: "Calculado con reglas", ia: "Propuesto por IA y verificado", ejemplo: "Ejemplo" } as const;
 
@@ -217,6 +219,8 @@ export default function Home() {
             </ol>
           </div>
         </section>
+
+        {congresoData() && <BudgetVoteGrid data={congresoData()!} compact />}
 
         {lead && (
           <section style={{ display: "flex", flexDirection: "column", gap: 18 }} aria-labelledby="hall">

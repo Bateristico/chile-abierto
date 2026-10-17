@@ -6,7 +6,7 @@ data/raw/*
 !data/raw/.gitkeep
 *.tsbuildinfo
 next-env.d.ts
-data/store/verification-report.json
+data/store/*
 out
 public/datos
 data/cache

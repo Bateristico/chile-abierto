@@ -1,6 +1,6 @@
 import { XMLParser } from "fast-xml-parser";
 import { z } from "zod";
-import { fetchSnapshot, type Snapshot } from "./http";
+import { fetchImmutable, fetchSnapshot, type Snapshot } from "./http";
 import type { Connector, ConnectorResult } from "./types";
 import type { FactInput, SourceRef } from "../provenance/types";
 
@@ -236,7 +236,9 @@ export const camara: Connector = {
     const quarantined: string[] = [];
     let withoutDetail = 0;
     for (const v of votaciones.slice(0, max)) {
-      const snap = await fetchSnapshot(CAMARA_ENDPOINTS.votacionDetalle(v.Id), "camara");
+      // Votes are final once published: reuse cached details older than two days.
+      const recent = Date.now() - Date.parse(v.Fecha) < 2 * 86_400_000;
+      const snap = await (recent ? fetchSnapshot : fetchImmutable)(CAMARA_ENDPOINTS.votacionDetalle(v.Id), "camara");
       const these: VoteRecord[] = findArray(parseXml(snap.body), "Voto").map((x) => {
         const o = x as Record<string, unknown>;
         return { votacionId: v.Id, diputadoId: voteDeputyId(o), ...parseOpcion(o["OpcionVoto"]) };
@@ -248,7 +250,6 @@ export const camara: Connector = {
         if (problem) quarantined.push(problem);
         else votes.push(...these);
       }
-      await new Promise((r) => setTimeout(r, 150));
     }
     const checked = Math.min(max, votaciones.length);
     notes.push(`${checked - quarantined.length - withoutDetail} votaciones cuadradas con sus totales oficiales`);
