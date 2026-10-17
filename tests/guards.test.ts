@@ -5,6 +5,7 @@ import { squarify } from "@/lib/budget/treemap";
 import { reconcileVotes, parseXml, findArray, parseOpcion } from "@/lib/connectors/camara";
 import { redactUrl } from "@/lib/connectors/http";
 import { findPartidaRow } from "@/lib/connectors/dipres-ifp";
+import { pickCpiSeries } from "@/lib/connectors/bcch";
 import { loadFacts } from "@/lib/facts";
 
 describe("agent grounding", () => {
@@ -50,6 +51,19 @@ describe("connectors", () => {
   it("never stores credentials from query strings", () => {
     expect(redactUrl("https://api.mercadopublico.cl/x.json?fecha=01102026&ticket=ABC-123")).not.toContain("ABC-123");
     expect(redactUrl("https://si3.bcentral.cl/S.ashx?user=me&pass=secret&function=GetSeries")).not.toMatch(/secret|=me&/);
+    expect(redactUrl("https://si3.bcentral.cl/S.ashx?token=tok-999&function=GetSeries")).not.toContain("tok-999");
+  });
+
+  it("picks the general CPI index with the latest base from the BDE catalogue", () => {
+    const pick = pickCpiSeries([
+      { seriesId: "F073.TCO.PRE.Z.D", spanishTitle: "Dólar observado" },
+      { seriesId: "F074.IPC.IND.Z.EP18.C.M", spanishTitle: "IPC General, índice base 2018=100" },
+      { seriesId: "F074.IPC.IND.Z.EP23.C.M", spanishTitle: "IPC General, índice base 2023=100" },
+      { seriesId: "F074.IPC.VAR.Z.Z.C.M", spanishTitle: "IPC General, variación mensual" },
+      { seriesId: "F074.IPC.IND.Z.EP23.ALI.M", spanishTitle: "IPC Alimentos" },
+    ]);
+    expect(pick.chosen).toBe("F074.IPC.IND.Z.EP23.C.M");
+    expect(pick.candidates).toHaveLength(2);
   });
 
   it("reconciles individual votes with the published totals, by official option code", () => {

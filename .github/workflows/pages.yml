@@ -40,6 +40,7 @@ jobs:
         continue-on-error: true
         env:
           MERCADOPUBLICO_TICKET: ${{ secrets.MERCADOPUBLICO_TICKET }}
+          BCCH_TOKEN: ${{ secrets.BCCH_TOKEN }}
           BCCH_USER: ${{ secrets.BCCH_USER }}
           BCCH_PASS: ${{ secrets.BCCH_PASS }}
           BCCH_CPI_SERIES: ${{ vars.BCCH_CPI_SERIES }}

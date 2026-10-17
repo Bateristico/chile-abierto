@@ -26,7 +26,12 @@ export const mercadoPublico: Connector = {
     const day = new Date(Date.now() - 86_400_000);
     const url = `${BASE}/ordenesdecompra.json?fecha=${mpDate(day)}&ticket=${process.env.MERCADOPUBLICO_TICKET}`;
     const snap = await fetchSnapshot(url, "chilecompra");
-    const res = OrdenesResponse.parse(JSON.parse(snap.body.toString("utf8")));
+    const body = JSON.parse(snap.body.toString("utf8"));
+    // Errors come back as { Codigo, Mensaje } (e.g. an invalid ticket or the 10.000 daily requests reached).
+    if (body && typeof body === "object" && "Mensaje" in body && !("Listado" in body)) {
+      throw new Error(`Mercado Público respondió ${body.Codigo ?? ""}: ${body.Mensaje}`);
+    }
+    const res = OrdenesResponse.parse(body);
     const issues: string[] = [];
     if (res.Cantidad !== res.Listado.length) issues.push(`La API declara ${res.Cantidad} órdenes y entrega ${res.Listado.length}.`);
     return {

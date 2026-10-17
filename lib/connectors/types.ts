@@ -15,5 +15,7 @@ export interface Connector {
   description: string;
   /** Environment variables required to run. */
   requires?: string[];
+  /** Alternative credential sets: the connector runs if every variable of at least one set is present. */
+  requiresAnyOf?: string[][];
   run(opts: { year: number }): Promise<ConnectorResult>;
 }

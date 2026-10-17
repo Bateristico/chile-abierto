@@ -9,7 +9,7 @@ Cómo gasta Chile su presupuesto, cómo votan sus parlamentarios frente a lo que
 ```bash
 npm install
 npm run dev                  # http://localhost:3000
-npm test                     # 28 pruebas de las reglas de verificación
+npm test                     # 29 pruebas de las reglas de verificación
 npm run build                # verifica los datos y exporta el sitio estático a out/
 npm run serve                # sirve out/ localmente
 ```
@@ -26,7 +26,12 @@ El sitio es **estático**: los datos y la capa de IA se capturan, verifican y "h
 Configuración en GitHub (una vez):
 
 - *Settings → Pages → Source: GitHub Actions*.
-- *Settings → Secrets and variables → Actions*: `ANTHROPIC_API_KEY` (capa de IA). Opcionales: `MERCADOPUBLICO_TICKET`, `BCCH_USER`, `BCCH_PASS`; variables `ANTHROPIC_MODEL`, `BCCH_CPI_SERIES`, `CAMARA_MAX_DETAIL`.
+- *Settings → Secrets and variables → Actions*: `ANTHROPIC_API_KEY` (capa de IA). Opcionales: `MERCADOPUBLICO_TICKET`, `BCCH_TOKEN` (o `BCCH_USER` + `BCCH_PASS`); variables `ANTHROPIC_MODEL`, `BCCH_CPI_SERIES`, `CAMARA_MAX_DETAIL`.
+
+### Credenciales de Banco Central y Mercado Público
+
+- **Banco Central (BDE)**: crear cuenta en la [Base de Datos Estadísticos](https://si3.bcentral.cl/siete), activar la API en [Acceso a la API](https://si3.bcentral.cl/estadisticas/Principal1/Web_Services/acceso_api.html) y copiar el token desde *Mi Cuenta → Apikey Token* (vale un año; se puede extender). Guardarlo como secreto `BCCH_TOKEN`. El conector busca solo la serie de IPC general en el catálogo; `BCCH_CPI_SERIES` la fija si se quiere. Límite: 5 series por segundo.
+- **Mercado Público (ChileCompra)**: aceptar los términos y entrar con ClaveÚnica en [api.mercadopublico.cl](https://api.mercadopublico.cl/modules/IniciarSesion.aspx), opción *Solicitud de Ticket*; el ticket llega por correo (uno por persona, 10.000 consultas diarias). Guardarlo como secreto `MERCADOPUBLICO_TICKET`.
 
 Datos abiertos publicados con el sitio: `/datos/facts.json`, `/datos/verification-report.json`, `/datos/snapshot.json`, `/datos/ai-snapshot.json`.
 
@@ -80,7 +85,7 @@ Cada conector (`lib/connectors/`) descarga **solo** de dominios oficiales, guard
 | --- | --- | --- |
 | `dipres-ifp` | DIPRES, Informe de Finanzas Públicas (PDF) | Re-lee las 32 partidas y el total del Gobierno Central del PDF oficial. Si coinciden con lo corroborado, los sube a **oficial** con página y hash |
 | `camara` | opendata.camara.cl (XML) | Diputados en ejercicio (debe dar 155), votaciones del año y votos individuales; cada votación debe cuadrar con sus totales oficiales |
-| `bcch` | Banco Central, API BDE | IPC mensual para pesos reales. Requiere `BCCH_USER`/`BCCH_PASS` |
+| `bcch` | Banco Central, API BDE | IPC mensual para pesos reales. Requiere `BCCH_TOKEN` (o `BCCH_USER`/`BCCH_PASS`) |
 | `mercadopublico` | ChileCompra API | Órdenes de compra diarias. Requiere `MERCADOPUBLICO_TICKET` |
 
 Las credenciales nunca quedan en snapshots ni fuentes (`redactUrl`).

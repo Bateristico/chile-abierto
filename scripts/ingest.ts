@@ -30,7 +30,10 @@ let failures = 0;
 const status: { id: string; status: "ok" | "issues" | "error" | "skipped"; detail: string }[] = [];
 
 for (const c of selected) {
-  const missing = (c.requires ?? []).filter((k) => !process.env[k]);
+  let missing = (c.requires ?? []).filter((k) => !process.env[k]);
+  if (c.requiresAnyOf && !c.requiresAnyOf.some((set) => set.every((k) => process.env[k]))) {
+    missing = [...missing, c.requiresAnyOf.map((set) => set.join(" + ")).join(" o ")];
+  }
   if (missing.length) {
     console.log(`– ${c.id}: omitido, faltan ${missing.join(", ")}`);
     status.push({ id: c.id, status: "skipped", detail: `Faltan credenciales: ${missing.join(", ")}` });
@@ -44,7 +47,9 @@ for (const c of selected) {
       failures++;
       fs.writeFileSync(issuesFile, JSON.stringify({ at: new Date().toISOString(), issues: res.issues, notes: res.notes }, null, 2) + "\n");
       console.log(`con ${res.issues.length} problemas; no se publica nada. Ver ${path.relative(process.cwd(), issuesFile)}`);
-      status.push({ id: c.id, status: "issues", detail: `${res.issues.length} problemas en revisión` });
+      for (const i of res.issues.slice(0, 10)) console.log(`   · ${i}`);
+      const shown = res.issues.slice(0, 3).join(" | ") + (res.issues.length > 3 ? ` | y ${res.issues.length - 3} más` : "");
+      status.push({ id: c.id, status: "issues", detail: `${res.issues.length} problemas en revisión: ${shown} · ${res.notes.join(" · ")}` });
       continue;
     }
     if (fs.existsSync(issuesFile)) fs.rmSync(issuesFile);
