@@ -116,11 +116,11 @@ export default function Fuentes() {
                   <ul style={{ margin: "4px 0 0", paddingLeft: 18 }}>{ai.errors.map((e, i) => <li key={i}><code>{e}</code></li>)}</ul>
                 </div>
               )}
-              {!!ai.rejectedInsights?.length && (
+              {!!(ai.rejectedInsights?.length || ai.droppedQuestions?.length) && (
                 <details className="small">
                   <summary style={{ cursor: "pointer", fontWeight: 700, minHeight: 32 }}>Ver lo descartado y por qué</summary>
                   <ul style={{ margin: "8px 0 0", paddingLeft: 18, display: "flex", flexDirection: "column", gap: 6, color: "var(--ink-2)" }}>
-                    {ai.rejectedInsights.map((r, i) => <li key={i}>«{r.title}»: {r.reason}</li>)}
+                    {ai.rejectedInsights?.map((r, i) => <li key={i}>«{r.title}»: {r.reason}</li>)}
                     {ai.droppedQuestions?.map((r, i) => <li key={`q${i}`}>Pregunta «{r.question}»: {r.reason}</li>)}
                   </ul>
                 </details>

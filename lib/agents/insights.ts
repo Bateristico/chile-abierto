@@ -108,10 +108,11 @@ export async function generateInsights(client: Anthropic, model: string): Promis
     model,
     max_tokens: 6000,
     tools: [PROPOSE_TOOL],
-    tool_choice: { type: "tool", name: PROPOSE_TOOL.name },
+    // Some models refuse a forced tool choice: ask for the tool in the prompt and let the model call it.
+    tool_choice: { type: "auto" },
     system:
       "Eres analista de finanzas públicas de Chile. Buscas conexiones no obvias entre datos verificados: proporciones, contrastes, tensiones entre metas y montos. Reglas: usa SOLO cifras de la tabla, copiadas como aparecen o redondeadas; no calcules nuevas cifras salvo que el cálculo sea trivial y sus insumos estén citados; cita en factIds cada dato usado; si un dato no es oficial, dilo; no atribuyas intenciones ni causas; no menciones cantidades que no estén en la tabla (ni siquiera conteos como «32 partidas»); no repitas lo obvio. Español de Chile, claro.",
-    messages: [{ role: "user", content: `Datos verificados (id | dato | valor | nivel | definición):\n${table}\n\nPropón hasta 6 hallazgos.` }],
+    messages: [{ role: "user", content: `Datos verificados (id | dato | valor | nivel | definición):\n${table}\n\nPropón hasta 6 hallazgos. Responde llamando a la herramienta ${PROPOSE_TOOL.name}.` }],
   });
   const raw = toolInput(proposal, z.object({ hallazgos: z.array(z.unknown()) }))?.hallazgos ?? [];
 
@@ -133,9 +134,9 @@ export async function generateInsights(client: Anthropic, model: string): Promis
     model,
     max_tokens: 3000,
     tools: [CRITIC_TOOL],
-    tool_choice: { type: "tool", name: CRITIC_TOOL.name },
+    tool_choice: { type: "auto" },
     system: "Eres un revisor escéptico. Marca respaldado=false si una afirmación exagera, infiere causas, compara medidas distintas o usa datos no citados. Sé estricto.",
-    messages: [{ role: "user", content: dossier }],
+    messages: [{ role: "user", content: `${dossier}\n\nResponde llamando a la herramienta ${CRITIC_TOOL.name}.` }],
   });
   const evals = toolInput(critique, z.object({ evaluaciones: z.array(z.object({ id: z.string(), respaldado: z.boolean(), comentario: z.string() })) }))?.evaluaciones ?? [];
 
