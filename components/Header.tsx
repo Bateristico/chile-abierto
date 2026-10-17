@@ -5,6 +5,8 @@ import { fmtDate, fmtEditionDate } from "@/lib/format";
 
 const NAV = [
   { href: "/", label: "Portada" },
+  { href: "/gobierno", label: "Gobierno" },
+  { href: "/leyes", label: "Leyes" },
   { href: "/presupuesto", label: "Presupuesto" },
   { href: "/congreso", label: "Congreso" },
   { href: "/votaciones", label: "Votaciones" },
@@ -64,9 +66,10 @@ export function Footer() {
       <span style={{ flexBasis: "100%" }}>
         {snap ? `Datos al ${fmtDate(snap.takenAt)}: ${snap.ok} de ${snap.total} conectores oficiales al día.` : "Datos semilla verificados manualmente; aún no se ejecuta una ingesta automática."} El sitio se reconstruye cada día.
       </span>
-      <span>Fuentes: DIPRES · Cámara de Diputadas y Diputados · Servel · Banco Central · ChileCompra · INE · Consejo para la Transparencia</span>
+      <span>Fuentes: DIPRES · Cámara de Diputadas y Diputados · Senado · Servel · Banco Central · ChileCompra · INE · Consejo para la Transparencia</span>
       <span style={{ display: "flex", gap: 18 }}>
         <Link href="/fuentes">Cómo verificamos</Link>
+        <Link href="/metodos">Métodos</Link>
         <a href={href("/datos/facts.json")}>Datos abiertos (JSON)</a>
       </span>
     </footer>

@@ -6,6 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { loadFacts } from "../lib/facts";
 import { congresoData, clientPeriod, analysisFor } from "../lib/congreso/load";
+import { leyesData, clientRows, pageBoletines } from "../lib/leyes/load";
 
 const out = path.join(process.cwd(), "public", "datos");
 fs.mkdirSync(out, { recursive: true });
@@ -27,5 +28,11 @@ if (congreso) {
     fs.writeFileSync(path.join(out, "congreso", `p${p.id}-analisis.json`), JSON.stringify(analysisFor(p.id)));
   }
   console.log(`Congreso: ${congreso.periodos.map((p) => `${p.nombre} ${p.votaciones.length} votaciones`).join(" · ")}`);
+}
+// Bills and laws for the Leyes explorer.
+const leyes = leyesData();
+if (leyes) {
+  fs.writeFileSync(path.join(out, "leyes.json"), JSON.stringify({ generadoEl: leyes.generadoEl, rows: clientRows(pageBoletines()) }));
+  console.log(`Leyes: ${leyes.bills.length} proyectos`);
 }
 console.log(`Datos abiertos exportados: ${facts.length} datos → public/datos/`);

@@ -19,11 +19,17 @@ export interface DipRow {
   y: number | null;
   cercanos: { id: number; share: number }[];
   lejanos: { id: number; share: number }[];
+  /** Mociones co-authored in the period and what became of them (null until the leyes connector has run) */
+  autoria: { presentados: number; ley: number; tramite: number; archivado: number; otros: number } | null;
+  /** Qualitative readings against the chamber's quartiles in the same period */
+  lect: { participacion: string | null; linea: string | null; presentados: string | null; tasa: string | null };
 }
 
 export interface DipPeriod {
   id: number;
   nombre: string;
+  /** Chamber medians for the same period */
+  ref: { participacion: number | null; linea: number | null; presentados: number | null; tasa: number | null };
   rows: DipRow[];
 }
 
@@ -120,6 +126,17 @@ export function DiputadosView({ periods, colors, curated }: { periods: DipPeriod
   );
 }
 
+function Stat({ label, value, reading, cmp }: { label: string; value: string; reading: string | null; cmp: string | null }) {
+  return (
+    <div style={{ background: "var(--ground)", borderRadius: 14, padding: "10px 12px", display: "flex", flexDirection: "column", gap: 2 }}>
+      <span className="tiny muted">{label}</span>
+      <span className="bignum" style={{ fontSize: 24 }}>{value}</span>
+      {reading && <span className="tiny" style={{ fontWeight: 700 }}>{reading}</span>}
+      {cmp && <span className="tiny muted">{cmp}</span>}
+    </div>
+  );
+}
+
 function Ficha({ d, P, byId, color, other, setOther, setSel, curated }: { d: DipRow; P: DipPeriod; byId: Map<number, DipRow>; color: (a: string) => string; other: number | null; setOther: (n: number | null) => void; setSel: (n: number) => void; curated?: string }) {
   const W = 300, H = 210;
   const X = (x: number) => W / 2 + x * (W / 2 - 10);
@@ -133,10 +150,21 @@ function Ficha({ d, P, byId, color, other, setOther, setSel, curated }: { d: Dip
       </div>
       {curated && <Link href={curated} className="btn primary" style={{ alignSelf: "flex-start" }}>Ver promesas y votos con datos reales</Link>}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 }}>
-        <div style={{ background: "var(--ground)", borderRadius: 14, padding: "10px 12px" }}><span className="tiny muted" style={{ display: "block" }}>Participación</span><span className="bignum" style={{ fontSize: 24 }}>{pct(d.participacion)}</span></div>
-        <div style={{ background: "var(--ground)", borderRadius: 14, padding: "10px 12px" }}><span className="tiny muted" style={{ display: "block" }}>Con su partido</span><span className="bignum" style={{ fontSize: 24 }}>{pct(d.linea)}</span></div>
-        <div style={{ background: "var(--ground)", borderRadius: 14, padding: "10px 12px" }}><span className="tiny muted" style={{ display: "block" }}>Del lado ganador</span><span className="bignum" style={{ fontSize: 24 }}>{pct(d.ganador)}</span></div>
+        <Stat label="Participación" value={pct(d.participacion)} reading={d.lect.participacion} cmp={P.ref.participacion !== null ? `Cámara: ${pct(P.ref.participacion)}` : null} />
+        <Stat label="Con su partido" value={pct(d.linea)} reading={d.lect.linea} cmp={P.ref.linea !== null ? `Cámara: ${pct(P.ref.linea)}` : null} />
+        <Stat label="Del lado ganador" value={pct(d.ganador)} reading={null} cmp={null} />
       </div>
+      {d.autoria && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <strong className="small">Sus proyectos (mociones) en este periodo</strong>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 10 }}>
+            <Stat label="Presentó o firmó" value={d.autoria.presentados.toLocaleString("es-CL")} reading={d.lect.presentados} cmp={P.ref.presentados !== null ? `Cámara: ${Math.round(P.ref.presentados)}` : null} />
+            <Stat label="Llegaron a ser ley" value={d.autoria.ley.toLocaleString("es-CL")} reading={d.lect.tasa ? `Tasa ${d.lect.tasa.toLowerCase()}` : null} cmp={d.autoria.presentados ? `${pct(d.autoria.ley / d.autoria.presentados)} de lo presentado` : null} />
+            <Stat label="Siguen en trámite" value={d.autoria.tramite.toLocaleString("es-CL")} reading={null} cmp={d.autoria.archivado ? `${d.autoria.archivado} archivados` : null} />
+          </div>
+          <p className="tiny muted">Una moción puede tener hasta 10 autores: cada uno la cuenta. Las lecturas (baja, típica, alta) comparan con el resto de la Cámara en el mismo periodo. <Link href="/metodos/#efectividad">Método</Link></p>
+        </div>
+      )}
       <p className="tiny muted">
         {d.registradas.toLocaleString("es-CL")} votaciones con su registro. «Con su partido» compara su voto con la mayoría de los demás miembros de su partido en {d.comparables.toLocaleString("es-CL")} votaciones
         {d.comparables < 30 ? " (muy pocas para concluir)" : ""}.

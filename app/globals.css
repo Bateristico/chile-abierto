@@ -352,3 +352,26 @@ svg .grow, svg .growY, svg .growR { transform-box: fill-box; }
 @container page (max-width: 760px) {
   .vdetail { order: 0; position: static; max-height: none; }
 }
+
+/* Laws */
+.chip.ia { background: transparent; box-shadow: inset 0 0 0 1.5px var(--grey); color: var(--ink-2); }
+.chip.law { background: var(--mint); color: var(--mint-ink); }
+.chip.dead { background: var(--line-soft); color: var(--muted); }
+.dial { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.dial svg { flex: none; }
+.ltl { display: flex; flex-direction: column; gap: 8px; }
+.ltl-row { display: grid; grid-template-columns: minmax(150px, 220px) 1fr auto; gap: 12px; align-items: center; font-size: 14px; }
+.ltl-bar { height: 12px; border-radius: 999px; background: var(--line-soft); position: relative; overflow: hidden; }
+.ltl-bar span { position: absolute; top: 0; bottom: 0; border-radius: 999px; background: var(--blue); min-width: 4px; }
+.ltl-row.mixta .ltl-bar span { background: var(--amber); }
+.ltl-row.tc .ltl-bar span { background: var(--teal); }
+.parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.parts > div { background: var(--ground); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.parts .k { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.stack { display: flex; height: 18px; border-radius: 999px; overflow: hidden; gap: 2px; }
+.stack span { display: block; height: 100%; }
+@container page (max-width: 760px) {
+  .ltl-row { grid-template-columns: 1fr auto; }
+  .ltl-row .ltl-bar { grid-column: 1 / -1; order: 3; }
+}
+.linklike { background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font: inherit; }

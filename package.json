@@ -14,7 +14,8 @@
     "typecheck": "tsc --noEmit",
     "ai-snapshot": "tsx scripts/ai-snapshot.ts",
     "serve": "npx --yes serve out",
-    "extract-programs": "tsx scripts/extract-programs.ts"
+    "extract-programs": "tsx scripts/extract-programs.ts",
+    "classify-laws": "tsx scripts/classify-laws.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",

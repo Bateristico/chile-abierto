@@ -63,6 +63,14 @@ jobs:
           ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'claude-sonnet-5-5' }}
         run: npm run extract-programs
 
+      # 1c. Depth class and impact parts of each law: published rules first, AI drafts (labelled, cached) for the rest.
+      - name: Clasificación de leyes
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL || 'claude-sonnet-5-5' }}
+        run: npm run classify-laws
+
       # 2. AI layer over the verified snapshot: insights and pre-answered questions, kept only if every number checks out.
       - name: Hallazgos y respuestas con IA
         continue-on-error: true

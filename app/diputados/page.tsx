@@ -4,6 +4,7 @@ import { DiputadosView, type DipPeriod } from "@/components/DiputadosView";
 import { congresoData, analysisFor } from "@/lib/congreso/load";
 import { partyOn } from "@/lib/congreso/types";
 import { partyColors } from "@/lib/congreso/colors";
+import { autoriaPorDiputado, quartiles, reading, referenciaAutoria, leyesData } from "@/lib/leyes/load";
 
 export const metadata: Metadata = { title: "Diputadas y diputados" };
 
@@ -16,9 +17,20 @@ export default function Diputados() {
     const stats = new Map(a.diputados.map((s) => [s.id, s]));
     const pos = new Map(a.mapa.points.map((pt) => [pt.id, pt]));
     const col = new Map(a.colegas.map((c) => [c.id, c]));
+    const aut = leyesData() ? autoriaPorDiputado(p) : null;
+    const ref = aut ? referenciaAutoria(aut) : null;
+    const partQ = quartiles(a.diputados.filter((s) => s.registradas >= 50).map((s) => (s.favor + s.contra + s.abst) / s.registradas));
+    const lineQ = quartiles(a.diputados.filter((s) => s.comparables >= 30).map((s) => s.conPartido / s.comparables));
+    const mid = (q: { p50: number } | null) => (q ? q.p50 : null);
     periods.push({
       id: p.id,
       nombre: p.nombre,
+      ref: {
+        participacion: mid(partQ),
+        linea: mid(lineQ),
+        presentados: ref?.presentados?.p50 ?? null,
+        tasa: ref?.tasa?.p50 ?? null,
+      },
       rows: p.diputados
         .map((d) => {
           const s = stats.get(d.id);
@@ -37,6 +49,13 @@ export default function Diputados() {
             y: pos.get(d.id)?.y ?? null,
             cercanos: (col.get(d.id)?.cercanos ?? []).map((c) => ({ id: c.id, share: c.share })),
             lejanos: (col.get(d.id)?.lejanos ?? []).map((c) => ({ id: c.id, share: c.share })),
+            autoria: aut?.get(d.id) ?? null,
+            lect: {
+              participacion: s && s.registradas >= 50 ? reading((s.favor + s.contra + s.abst) / s.registradas, partQ, ["Baja", "Típica", "Alta"]) : null,
+              linea: s && s.comparables >= 30 ? reading(s.conPartido / s.comparables, lineQ, ["Más independiente", "Típica", "Más alineada"]) : null,
+              presentados: aut?.get(d.id) ? reading(aut.get(d.id)!.presentados, ref?.presentados ?? null, ["Pocos", "Típicos", "Muchos"]) : null,
+              tasa: aut?.get(d.id) && aut.get(d.id)!.presentados >= 5 ? reading(aut.get(d.id)!.ley / aut.get(d.id)!.presentados, ref?.tasa ?? null, ["Baja", "Típica", "Alta"]) : null,
+            },
           };
         })
         .filter((r) => r.registradas > 0),
