@@ -155,7 +155,7 @@ export function clientRows(pages: Set<string>) {
       pub: b.publicada ?? null,
       d: daysToLaw(b),
       et: b.etapa,
-      u: b.urgenciaActual && !/sin urgencia/i.test(b.urgenciaActual) ? b.urgenciaActual : null,
+      u: b.st === "tramite" && b.urgenciaActual && !/sin urgencia/i.test(b.urgenciaActual) ? b.urgenciaActual : null,
       p: c?.profundidad ?? null,
       por: c?.por ?? null,
       dial: di?.nivel ?? null,

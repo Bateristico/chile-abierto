@@ -97,6 +97,7 @@ describe("law depth rules and impact dial", () => {
     expect(ruleFor({ titulo: "Autoriza erigir un monumento en memoria de Gabriela Mistral" })?.profundidad).toBe("simbolica");
     expect(ruleFor({ titulo: "Concede, por especial gracia, la nacionalidad chilena a X" })?.profundidad).toBe("simbolica");
     expect(ruleFor({ titulo: "Ley de Presupuestos del Sector Público correspondiente al año 2026" })?.profundidad).toBe("estructural");
+    expect(ruleFor({ titulo: "Ley de Presupuestos para el Sector Público correspondiente al año 2027" })?.profundidad).toBe("estructural");
     expect(ruleFor({ titulo: "Modifica el Código del Trabajo con el objeto de reducir la jornada laboral" })).toBeNull();
   });
   it("needs at least two known parts to show a dial", () => {

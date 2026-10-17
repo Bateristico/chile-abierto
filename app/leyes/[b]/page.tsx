@@ -86,7 +86,7 @@ export default async function LeyPage({ params }: { params: Promise<{ b: string 
             <StatusChip st={bill.st} />
             <span className="chip">{bill.iniciativa === "Mensaje" ? "Proyecto del Gobierno (Mensaje)" : "Moción parlamentaria"}</span>
             {c && <DepthChip p={c.profundidad} por={c.por} />}
-            {bill.urgenciaActual && !/sin urgencia/i.test(bill.urgenciaActual) && <span className="chip warn">Urgencia {bill.urgenciaActual.toLowerCase()}</span>}
+            {bill.st === "tramite" && bill.urgenciaActual && !/sin urgencia/i.test(bill.urgenciaActual) && <span className="chip warn">Urgencia {bill.urgenciaActual.toLowerCase()}</span>}
           </span>
         </section>
 

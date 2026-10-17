@@ -61,7 +61,7 @@ const RULES: { id: string; re: RegExp; profundidad: Profundidad; razon: string; 
   },
   {
     id: "ley-de-presupuestos",
-    re: /^ley de presupuestos del sector p[uú]blico/i,
+    re: /^ley de presupuestos? (del|para el) sector p[uú]blico/i,
     profundidad: "estructural",
     razon: "Ley de Presupuestos: fija todo el gasto del Estado para un año.",
     partes: { alcance: "amplio", permanencia: "temporal", derechos: "ajusta", instituciones: "ajusta" },
