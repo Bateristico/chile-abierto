@@ -1,0 +1,33 @@
+{
+  "name": "chile-abierto",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "npm run verify && next build",
+    "start": "next start",
+    "verify": "tsx scripts/verify.ts",
+    "ingest": "tsx scripts/ingest.ts",
+    "extract-promises": "tsx scripts/extract-promises.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
+    "fast-xml-parser": "^5.11.2",
+    "next": "^16.4.2",
+    "pdf-parse": "^2.4.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tsx": "^4",
+    "typescript": "^5",
+    "vitest": "^5.0.5"
+  }
+}

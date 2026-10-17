@@ -1,0 +1,98 @@
+{
+  "id": "ppto2027.partidas",
+  "title": "Proyecto de Ley de Presupuestos 2027: gasto por partida",
+  "asOf": "2026-09-30",
+  "unit": "CLP_miles",
+  "measure": "Gasto propuesto por partida en el Proyecto de Ley de Presupuestos 2027, en miles de pesos de 2027, tal como lo presenta el cuadro por partida del Informe de Finanzas Públicas del tercer trimestre de 2026 (excluye saldo final de caja, servicio de la deuda e íntegros al fisco). No incluye la partida Tesoro Público.",
+  "comparison": "Variación real respecto de la base 2026 comparable: Ley inicial 2026 más reajuste del sector público, leyes especiales y ajustes fiscales del año.",
+  "sources": {
+    "emol": {
+      "publisher": "emol",
+      "title": "Salud se lleva la mayor alza y gobiernos regionales el principal recorte: Presupuesto 2027, partida por partida",
+      "url": "https://www.emol.com/noticias/Economia/2026/10/06/1213393/presupuesto-detalle-partida-proyecto-gobierno.html",
+      "locator": "Tabla por partida, miles de pesos 2027, fuente citada: DIPRES IFP 3T 2026",
+      "publishedAt": "2026-10-06",
+      "retrievedAt": "2026-10-17",
+      "verifiedBy": "manual"
+    },
+    "cnnchile": {
+      "publisher": "cnnchile",
+      "title": "Seguridad sube 7% y Culturas cae 10,1%: los ministerios con mayores alzas y recortes del Presupuesto 2027",
+      "url": "https://www.cnnchile.com/negocios/presupuesto-2027-seguridad-sube-y-culturas-cae-los-ministerios-con-mayores-alzas-y-recortes/",
+      "locator": "Tabla por partida, US$ millones, fuente citada: DIPRES IFP 3T 2026",
+      "publishedAt": "2026-10",
+      "retrievedAt": "2026-10-17",
+      "verifiedBy": "manual"
+    }
+  },
+  "officialDocument": {
+    "publisher": "dipres",
+    "title": "Informe de Finanzas Públicas, tercer trimestre 2026",
+    "url": "https://www.dipres.gob.cl/597/articles-433297_doc_pdf.pdf",
+    "note": "El cuadro por partida está en el capítulo II.4 / anexo VI. El conector dipres-ifp lo extrae y, si coincide, eleva estas cifras a «oficial»."
+  },
+  "partidas": [
+    { "slug": "presidencia", "name": "Presidencia de la República", "short": "Presidencia", "milesCLP": 22806322, "usdMillones": 23.5, "varPct": -3.2 },
+    { "slug": "congreso", "name": "Congreso Nacional", "short": "Congreso", "milesCLP": 188229031, "usdMillones": 194.0, "varPct": 0.1 },
+    { "slug": "poder-judicial", "name": "Poder Judicial", "short": "Poder Judicial", "milesCLP": 832845266, "usdMillones": 858.2, "varPct": 3.5 },
+    { "slug": "contraloria", "name": "Contraloría General de la República", "short": "Contraloría", "milesCLP": 130959397, "usdMillones": 134.9, "varPct": 5.9 },
+    { "slug": "interior", "name": "Ministerio del Interior", "short": "Interior", "milesCLP": 683510887, "usdMillones": 704.3, "varPct": 0.3 },
+    { "slug": "rree", "name": "Ministerio de Relaciones Exteriores", "short": "Relaciones Exteriores", "milesCLP": 301309062, "usdMillones": 310.5, "varPct": 4.1 },
+    { "slug": "economia", "name": "Ministerio de Economía, Fomento y Turismo", "short": "Economía", "milesCLP": 631990441, "usdMillones": 651.2, "varPct": -2.9 },
+    { "slug": "hacienda", "name": "Ministerio de Hacienda", "short": "Hacienda", "milesCLP": 699566466, "usdMillones": 720.9, "varPct": -2.2 },
+    { "slug": "educacion", "name": "Ministerio de Educación", "short": "Educación", "milesCLP": 17320010878, "usdMillones": 17847.2, "varPct": 0.0 },
+    { "slug": "justicia", "name": "Ministerio de Justicia y Derechos Humanos", "short": "Justicia", "milesCLP": 1015437290, "usdMillones": 1046.3, "varPct": 20.5 },
+    { "slug": "defensa", "name": "Ministerio de Defensa Nacional", "short": "Defensa", "milesCLP": 2556931638, "usdMillones": 2634.8, "varPct": 6.8 },
+    { "slug": "mop", "name": "Ministerio de Obras Públicas", "short": "Obras Públicas", "milesCLP": 4694632726, "usdMillones": 4837.5, "varPct": 8.9 },
+    { "slug": "agricultura", "name": "Ministerio de Agricultura", "short": "Agricultura", "milesCLP": 887643790, "usdMillones": 914.7, "varPct": -0.5 },
+    { "slug": "bienes-nacionales", "name": "Ministerio de Bienes Nacionales", "short": "Bienes Nacionales", "milesCLP": 53517845, "usdMillones": 55.1, "varPct": 38.0 },
+    { "slug": "trabajo", "name": "Ministerio del Trabajo y Previsión Social", "short": "Trabajo y Pensiones", "milesCLP": 16908393213, "usdMillones": 17423.1, "varPct": 1.4 },
+    { "slug": "salud", "name": "Ministerio de Salud", "short": "Salud", "milesCLP": 18314764816, "usdMillones": 18872.3, "varPct": 4.7 },
+    { "slug": "mineria", "name": "Ministerio de Minería", "short": "Minería", "milesCLP": 56085118, "usdMillones": 57.8, "varPct": -0.4 },
+    { "slug": "vivienda", "name": "Ministerio de Vivienda y Urbanismo", "short": "Vivienda", "milesCLP": 4816762424, "usdMillones": 4963.4, "varPct": 5.8 },
+    { "slug": "transportes", "name": "Ministerio de Transportes y Telecomunicaciones", "short": "Transportes", "milesCLP": 1902117544, "usdMillones": 1960.0, "varPct": 2.2 },
+    { "slug": "segegob", "name": "Ministerio Secretaría General de Gobierno", "short": "Secretaría Gral. de Gobierno", "milesCLP": 38637290, "usdMillones": 39.8, "varPct": -2.0 },
+    { "slug": "desarrollo-social", "name": "Ministerio de Desarrollo Social y Familia", "short": "Desarrollo Social", "milesCLP": 1498648920, "usdMillones": 1544.3, "varPct": 1.9 },
+    { "slug": "segpres", "name": "Ministerio Secretaría General de la Presidencia", "short": "Secretaría Gral. de la Presidencia", "milesCLP": 12374261, "usdMillones": 12.8, "varPct": -1.0 },
+    { "slug": "ministerio-publico", "name": "Ministerio Público", "short": "Fiscalía (Min. Público)", "milesCLP": 336311579, "usdMillones": 346.5, "varPct": 5.0 },
+    { "slug": "energia", "name": "Ministerio de Energía", "short": "Energía", "milesCLP": 137072297, "usdMillones": 141.2, "varPct": -11.8 },
+    { "slug": "medio-ambiente", "name": "Ministerio del Medio Ambiente", "short": "Medio Ambiente", "milesCLP": 98631393, "usdMillones": 101.6, "varPct": 0.3 },
+    { "slug": "deporte", "name": "Ministerio del Deporte", "short": "Deporte", "milesCLP": 267102855, "usdMillones": 275.2, "varPct": 39.8 },
+    { "slug": "mujer", "name": "Ministerio de la Mujer y la Equidad de Género", "short": "Mujer y Equidad de Género", "milesCLP": 93088109, "usdMillones": 95.9, "varPct": 1.2 },
+    { "slug": "servel", "name": "Servicio Electoral", "short": "Servel", "milesCLP": 34959362, "usdMillones": 36.0, "varPct": -11.9 },
+    { "slug": "culturas", "name": "Ministerio de las Culturas, las Artes y el Patrimonio", "short": "Culturas", "milesCLP": 440518003, "usdMillones": 453.9, "varPct": -10.1 },
+    { "slug": "ciencia", "name": "Ministerio de Ciencia, Tecnología, Conocimiento e Innovación", "short": "Ciencia", "milesCLP": 545355311, "usdMillones": 562.0, "varPct": -6.4 },
+    { "slug": "gores", "name": "Financiamiento Gobiernos Regionales", "short": "Gobiernos Regionales", "milesCLP": 1803523882, "usdMillones": 1858.4, "varPct": -4.8 },
+    { "slug": "seguridad", "name": "Ministerio de Seguridad Pública", "short": "Seguridad Pública", "milesCLP": 3483451730, "usdMillones": 3589.5, "varPct": 7.0 }
+  ],
+  "officialSpotChecks": [
+    {
+      "slug": "congreso",
+      "document": {
+        "publisher": "dipres",
+        "title": "Proyecto de Ley de Presupuestos 2027, Partida 02 Congreso Nacional (clasificación económica)",
+        "url": "https://www.dipres.gob.cl/597/articles-430737_doc_pdf.pdf",
+        "locator": "Gastos, total y subtítulos 25, 34 y 35",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual"
+      },
+      "officialTotalMilesCLP": 188229181,
+      "excludedSubtitlesMilesCLP": 150,
+      "explanation": "Total de gastos de la partida (188.229.181) menos íntegros al fisco (50), servicio de la deuda (50) y saldo final de caja (50) = 188.229.031, igual a la tabla."
+    },
+    {
+      "slug": "presidencia",
+      "document": {
+        "publisher": "dipres",
+        "title": "Proyecto de Presupuestos 2027, Presidencia de la República: información complementaria, resumen global",
+        "url": "https://www.dipres.gob.cl/597/articles-432190_doc_pdf.pdf",
+        "locator": "Total neto gastos de los servicios",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual"
+      },
+      "officialTotalMilesCLP": 22806342,
+      "excludedSubtitlesMilesCLP": 0,
+      "explanation": "El total neto oficial (22.806.342) difiere de la tabla (22.806.322) en $20 mil (0,0001%), dentro de la tolerancia; atribuible a subtítulos menores excluidos del cuadro."
+    }
+  ]
+}

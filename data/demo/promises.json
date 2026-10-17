@@ -1,0 +1,76 @@
+{
+  "person": {
+    "name": "Andrea Soto",
+    "initials": "AS",
+    "role": "Diputada por el Distrito 8, Partido Ejemplo A. Periodo 2026 a 2030.",
+    "consistency": { "aligned": 18, "total": 25, "chamberAverage": 64 },
+    "coverage": 41,
+    "absences": { "person": 6, "chamber": 9 },
+    "againstCaucus": { "total": 9, "onPromises": 4 },
+    "termStart": "2026-03-11",
+    "termEnd": "2030-03-11"
+  },
+  "topics": [
+    { "id": "seguridad", "name": "Seguridad", "statuses": "ccuuuueninnn" },
+    { "id": "pensiones", "name": "Pensiones", "statuses": "cccuunne" },
+    { "id": "salud", "name": "Salud", "statuses": "cuuueiinnn" },
+    { "id": "educacion", "name": "Educación", "statuses": "cuuennnnn" },
+    { "id": "vivienda", "name": "Vivienda", "statuses": "cuuuenn" },
+    { "id": "medio-ambiente", "name": "Medio ambiente", "statuses": "cueein" },
+    { "id": "economia", "name": "Economía", "statuses": "cccuuueennnn" }
+  ],
+  "promises": [
+    {
+      "id": "seg", "topic": "seguridad", "type": "legislar y financiar", "status": "u", "page": 12,
+      "quote": "Más carabineros en las calles de mi distrito: 500 nuevos funcionarios.",
+      "why": "Votó a favor de los dos proyectos relacionados y la partida de Carabineros sube en el Proyecto 2027. Aún no hay datos de dotación por distrito.",
+      "evidence": [
+        { "date": "2026-05-14", "kind": "votación en Sala", "align": "a favor", "text": "Votó a favor del proyecto que amplía las plantas de Carabineros.", "extra": "Su bancada votó 96% a favor." },
+        { "date": "2026-07-02", "kind": "proyecto de ley", "align": "a favor", "text": "Presentó una moción para repartir la dotación policial por territorio.", "extra": "Primer trámite, Comisión de Seguridad." }
+      ]
+    },
+    {
+      "id": "pen", "topic": "pensiones", "type": "votación", "status": "c", "page": 18,
+      "quote": "Votaré en contra de cualquier alza de cotización de cargo del trabajador.",
+      "why": "Votó en contra de las dos indicaciones que pasaban parte de la cotización al trabajador.",
+      "evidence": [
+        { "date": "2026-04-21", "kind": "votación en comisión", "align": "a favor", "text": "Votó en contra de la cotización adicional de cargo del trabajador.", "extra": "Comisión de Trabajo." },
+        { "date": "2026-06-09", "kind": "votación en Sala", "align": "a favor", "text": "Votó en contra del artículo 4 del ajuste previsional.", "extra": "Su bancada votó 71% en contra." }
+      ]
+    },
+    {
+      "id": "salud", "topic": "salud", "type": "financiamiento", "status": "i", "page": 21,
+      "quote": "Aumentaré los recursos para reducir las listas de espera en mi región.",
+      "why": "Votó a favor de mover recursos fuera del programa de listas de espera, y no hay otro voto que lo compense.",
+      "evidence": [
+        { "date": "2026-03-30", "kind": "lobby", "align": "contexto", "text": "Tuvo una audiencia con una asociación de prestadores privados de salud.", "extra": "InfoLobby, 45 minutos." },
+        { "date": "2026-04-22", "kind": "votación en comisión", "align": "en contra", "text": "Votó a favor de reasignar recursos desde listas de espera a otro programa.", "extra": "Su bancada se dividió 50 y 50." }
+      ]
+    },
+    {
+      "id": "amb", "topic": "medio-ambiente", "type": "legislar", "status": "e", "page": 27,
+      "quote": "Impulsaré una ley de protección de glaciares.",
+      "why": "Patrocinó el proyecto, pero lleva siete meses en comisión sin votación ni urgencia.",
+      "evidence": [
+        { "date": "2026-03-10", "kind": "proyecto de ley", "align": "a favor", "text": "Patrocinó el proyecto de ley de glaciares.", "extra": "Primer trámite." }
+      ]
+    },
+    {
+      "id": "edu", "topic": "educacion", "type": "votación", "status": "n", "page": 30,
+      "quote": "Defenderé la gratuidad universitaria.",
+      "why": "En este periodo aún no se vota nada que afecte la gratuidad. Se discutirá con el Presupuesto 2027 en noviembre.",
+      "evidence": []
+    },
+    {
+      "id": "viv", "topic": "vivienda", "type": "financiamiento", "status": "u", "page": 33,
+      "quote": "Apoyaré subsidios para 20.000 viviendas en la región.",
+      "why": "Votó a favor del plan habitacional. Su voto de noviembre sobre la partida de Vivienda definirá el estado.",
+      "evidence": [
+        { "date": "2026-08-12", "kind": "votación en Sala", "align": "a favor", "text": "Votó a favor de prorrogar el Plan de Emergencia Habitacional.", "extra": "Su bancada votó 88% a favor." }
+      ]
+    }
+  ],
+  "caucuses": [
+    ["Partido Ejemplo A", 74], ["Partido Ejemplo B", 69], ["Partido Ejemplo C", 66], ["Partido Ejemplo D", 61], ["Partido Ejemplo E", 58], ["Independientes", 55]
+  ]
+}

@@ -1,0 +1,282 @@
+[
+  {
+    "id": "gc.gasto_total_2027",
+    "label": "Gasto total del Gobierno Central, Proyecto 2027",
+    "definition": "Gasto total del Gobierno Central (presupuestario y extrapresupuestario) proyectado para 2027 en el Proyecto de Ley de Presupuestos. Equivale al 23,7% del PIB.",
+    "value": 91175816,
+    "unit": "CLP_millones",
+    "asOf": "2026-09-30",
+    "domain": "presupuesto",
+    "sources": [
+      {
+        "publisher": "dipres",
+        "title": "Informe de Finanzas Públicas, tercer trimestre 2026",
+        "url": "https://www.dipres.gob.cl/597/articles-433297_doc_pdf.pdf",
+        "locator": "Resumen, Cuadro 4",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "$91.175.816 millones"
+      }
+    ]
+  },
+  {
+    "id": "gc.crecimiento_real_2027",
+    "label": "Crecimiento real del gasto 2027",
+    "definition": "Variación real del gasto del Gobierno Central 2027 respecto de la ejecución proyectada para 2026.",
+    "value": 1.5,
+    "unit": "pct",
+    "asOf": "2026-09-30",
+    "domain": "presupuesto",
+    "sources": [
+      {
+        "publisher": "dipres",
+        "title": "Informe de Finanzas Públicas, tercer trimestre 2026",
+        "url": "https://www.dipres.gob.cl/597/articles-433297_doc_pdf.pdf",
+        "locator": "Resumen",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "1,5"
+      },
+      {
+        "publisher": "camara",
+        "title": "Ingresa proyecto de Ley de Presupuesto 2027",
+        "url": "https://www.camara.cl/cms/?p=99924",
+        "locator": "Nota de prensa institucional, párrafo 2",
+        "publishedAt": "2026-10-01",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "1,5"
+      }
+    ]
+  },
+  {
+    "id": "gc.meta_deficit_estructural_2027",
+    "label": "Meta de déficit estructural 2027",
+    "definition": "Balance cíclicamente ajustado del Gobierno Central para 2027 según el Decreto N°486 de Política Fiscal.",
+    "value": -1.8,
+    "unit": "pct_pib",
+    "asOf": "2026-09-30",
+    "domain": "presupuesto",
+    "sources": [
+      {
+        "publisher": "dipres",
+        "title": "Informe de Finanzas Públicas, tercer trimestre 2026",
+        "url": "https://www.dipres.gob.cl/597/articles-433297_doc_pdf.pdf",
+        "locator": "Resumen, meta de balance estructural",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "-1,8% del PIB"
+      }
+    ]
+  },
+  {
+    "id": "gc.deficit_estructural_2026",
+    "label": "Déficit estructural 2026",
+    "definition": "Déficit estructural del Gobierno Central estimado para 2026, como % del PIB.",
+    "value": -2.8,
+    "unit": "pct_pib",
+    "asOf": "2026-10-05",
+    "domain": "presupuesto",
+    "sources": [
+      {
+        "publisher": "exante",
+        "title": "Presupuesto 2027: el Gobierno ingresa el proyecto",
+        "url": "https://www.ex-ante.cl/?p=380782",
+        "locator": "Bajada del artículo",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "2,8% del PIB"
+      }
+    ]
+  },
+  {
+    "id": "deuda.autorizacion_2027",
+    "label": "Endeudamiento que pide autorizar el Proyecto 2027",
+    "definition": "Monto máximo de endeudamiento que el Proyecto de Ley de Presupuestos 2027 pide autorizar, en millones de dólares (sin la autorización adicional de US$600 millones).",
+    "value": 25000,
+    "unit": "USD_millones",
+    "asOf": "2026-10-05",
+    "domain": "presupuesto",
+    "sources": [
+      {
+        "publisher": "emol",
+        "title": "Gobierno ingresa Presupuesto 2027",
+        "url": "https://www.emol.com/noticias/Economia/2026/10/05/1213323/gobierno-presupuesto-2027.html",
+        "locator": "Párrafo 2",
+        "publishedAt": "2026-10-05",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "US$25.000 millones"
+      },
+      {
+        "publisher": "exante",
+        "title": "Presupuesto 2027: el Gobierno ingresa el proyecto",
+        "url": "https://www.ex-ante.cl/?p=380782",
+        "locator": "Punteo inicial",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "US$25 mil millones"
+      }
+    ]
+  },
+  {
+    "id": "deuda.autorizacion_adicional_2027",
+    "label": "Autorización adicional de endeudamiento 2027",
+    "definition": "Autorización de endeudamiento adicional incluida en el Proyecto 2027, en millones de dólares.",
+    "value": 600,
+    "unit": "USD_millones",
+    "asOf": "2026-10-05",
+    "domain": "presupuesto",
+    "sources": [
+      {
+        "publisher": "exante",
+        "title": "Presupuesto 2027: el Gobierno ingresa el proyecto",
+        "url": "https://www.ex-ante.cl/?p=380782",
+        "locator": "Punteo inicial",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "US$600 millones"
+      }
+    ]
+  },
+  {
+    "id": "deuda.limite_inicial_2026",
+    "label": "Límite de endeudamiento de la Ley 2026",
+    "definition": "Límite de endeudamiento aprobado en la Ley de Presupuestos 2026, antes de su ampliación.",
+    "value": 17400,
+    "unit": "USD_millones",
+    "asOf": "2026-10-05",
+    "domain": "presupuesto",
+    "sources": [
+      {
+        "publisher": "emol",
+        "title": "Gobierno ingresa Presupuesto 2027",
+        "url": "https://www.emol.com/noticias/Economia/2026/10/05/1213323/gobierno-presupuesto-2027.html",
+        "locator": "Párrafo 3",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "US$17.400 millones"
+      }
+    ]
+  },
+  {
+    "id": "deuda.ampliacion_2026",
+    "label": "Ampliación del límite de deuda 2026",
+    "definition": "Monto en que el Congreso amplió el límite de endeudamiento 2026 a mitad de año.",
+    "value": 6200,
+    "unit": "USD_millones",
+    "asOf": "2026-10-05",
+    "domain": "presupuesto",
+    "sources": [
+      {
+        "publisher": "emol",
+        "title": "Gobierno ingresa Presupuesto 2027",
+        "url": "https://www.emol.com/noticias/Economia/2026/10/05/1213323/gobierno-presupuesto-2027.html",
+        "locator": "Párrafo 3",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "US$6.200 millones"
+      }
+    ]
+  },
+  {
+    "id": "poblacion.2026",
+    "label": "Población proyectada de Chile 2026",
+    "definition": "Población proyectada por el INE para 2026.",
+    "value": 20150948,
+    "unit": "personas",
+    "asOf": "2026-01-28",
+    "domain": "contexto",
+    "sources": [
+      {
+        "publisher": "ine",
+        "title": "El INE proyecta que en 2026 la población de Chile alcanzará las 20.150.948 personas",
+        "url": "https://www.ine.gob.cl/sala-de-prensa/prensa/general/noticia/2026/01/28/el-ine-proyecta-que-en-2026-la-poblaci%C3%B3n-de-chile-alcanzar%C3%A1-las-20.150.948-personas-llegando-a-su-nivel-m%C3%A1ximo-a-mediados-de-la-pr%C3%B3xima-d%C3%A9cada",
+        "locator": "Titular del comunicado",
+        "publishedAt": "2026-01-28",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "20.150.948"
+      }
+    ]
+  },
+  {
+    "id": "tramite.presentacion",
+    "label": "Presentación del Proyecto 2027 al Congreso",
+    "definition": "Fecha en que el Ejecutivo presentó el Proyecto de Ley de Presupuestos 2027.",
+    "value": "2026-09-30",
+    "unit": "fecha",
+    "asOf": "2026-09-30",
+    "domain": "congreso",
+    "sources": [
+      {
+        "publisher": "emol",
+        "title": "Presupuesto 2027: las seis claves del primer proyecto de Kast",
+        "url": "https://www.emol.com/noticias/Economia/2026/10/11/1213781/claves-presupuesto-gobierno-kast-recortes.html",
+        "locator": "Sección «Las primeras batallas»",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "30 de septiembre",
+        "reportedValue": "2026-09-30"
+      }
+    ]
+  },
+  {
+    "id": "tramite.cuenta_camara",
+    "label": "La Cámara da cuenta del ingreso",
+    "definition": "Fecha de la sesión de Sala en que la Cámara dio cuenta del ingreso del Proyecto 2027.",
+    "value": "2026-10-05",
+    "unit": "fecha",
+    "asOf": "2026-10-05",
+    "domain": "congreso",
+    "sources": [
+      {
+        "publisher": "camara",
+        "title": "Ingresa proyecto de Ley de Presupuesto 2027",
+        "url": "https://www.camara.cl/cms/?p=99924",
+        "locator": "Párrafo 2",
+        "publishedAt": "2026-10-01",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "lunes 5 de octubre",
+        "reportedValue": "2026-10-05"
+      }
+    ]
+  },
+  {
+    "id": "tramite.plazo_dias",
+    "label": "Plazo del Congreso para despachar el presupuesto",
+    "definition": "Días que tiene el Congreso para despachar la Ley de Presupuestos desde su presentación (art. 67 de la Constitución).",
+    "value": 60,
+    "unit": "dias",
+    "asOf": "2026-10-01",
+    "domain": "congreso",
+    "sources": [
+      {
+        "publisher": "camara",
+        "title": "Ingresa proyecto de Ley de Presupuesto 2027",
+        "url": "https://www.camara.cl/cms/?p=99924",
+        "locator": "Bajada",
+        "publishedAt": "2026-10-01",
+        "retrievedAt": "2026-10-17",
+        "verifiedBy": "manual",
+        "asPrinted": "60 días"
+      }
+    ]
+  },
+  {
+    "id": "tramite.plazo_fecha",
+    "label": "Fecha límite de despacho",
+    "definition": "Fecha de presentación más 60 días. Si el Congreso no despacha a tiempo, rige el proyecto presentado por el Ejecutivo.",
+    "value": "2026-11-29",
+    "unit": "fecha",
+    "asOf": "2026-09-30",
+    "domain": "congreso",
+    "sources": [],
+    "derivedFrom": [
+      "tramite.presentacion",
+      "tramite.plazo_dias"
+    ],
+    "method": "presentación + plazo en días"
+  }
+]

@@ -1,0 +1,36 @@
+[
+  {
+    "id": "demo-aportes-compras",
+    "cross": "Aportes de campaña y compras públicas",
+    "title": "Tres empresas que aportaron a campañas regionales recibieron tratos directos de servicios públicos en la misma región.",
+    "summary": "Ejemplo del cruce que hará el agente cuando estén cargados Servel (aportes) y Mercado Público (órdenes de compra), usando el RUT como llave. Una coincidencia no implica irregularidad.",
+    "factIds": [],
+    "chain": [
+      { "source": "Servel", "label": "Aportes de campaña", "detail": "Empresas A, B y C" },
+      { "source": "Servel", "label": "Candidaturas electas", "detail": "Región X" },
+      { "source": "Mercado Público", "label": "Tratos directos", "detail": "14 órdenes en 2026" },
+      { "source": "DIPRES", "label": "Servicio regional", "detail": "Programa que paga" }
+    ],
+    "edges": ["apoyaron a", "en la misma región", "pagados por"],
+    "alternatives": ["En zonas aisladas puede haber un solo proveedor disponible.", "Los montos pueden estar bajo el umbral que obliga a licitar."],
+    "wouldChange": "Que los tratos directos se expliquen por una emergencia declarada o por proveedor único documentado.",
+    "mentionsPeople": true
+  },
+  {
+    "id": "demo-lobby-votos",
+    "cross": "Lobby y votaciones",
+    "title": "Los diputados con audiencias de lobby del sector salud votaron distinto a su bancada el doble de veces en esa materia.",
+    "summary": "Ejemplo del cruce que hará el agente cuando estén cargados InfoLobby y las votaciones individuales de la Cámara.",
+    "factIds": [],
+    "chain": [
+      { "source": "InfoLobby", "label": "Audiencias de lobby", "detail": "Gremio del sector salud" },
+      { "source": "Cámara", "label": "23 diputados", "detail": "Con audiencias" },
+      { "source": "Cámara", "label": "Fuera de su bancada", "detail": "El doble que el resto" },
+      { "source": "BCN", "label": "Proyectos de salud", "detail": "41 votaciones" }
+    ],
+    "edges": ["se reunieron con", "después", "en"],
+    "alternatives": ["Quien trabaja un tema se reúne más y también vota con más criterio propio.", "La muestra es pequeña."],
+    "wouldChange": "Que el patrón desaparezca al comparar solo con diputados de la misma comisión.",
+    "mentionsPeople": true
+  }
+]

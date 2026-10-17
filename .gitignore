@@ -1,0 +1,9 @@
+node_modules
+.next
+.env
+.env.local
+data/raw/*
+!data/raw/.gitkeep
+*.tsbuildinfo
+next-env.d.ts
+data/store/verification-report.json
